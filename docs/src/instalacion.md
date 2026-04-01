@@ -6,7 +6,9 @@ Para la creación de este proyecto se ha configurado un entorno basado en Linux 
 * **Control de versiones:** Git inicializado para el seguimiento del código del proyecto.
 * **NVM y Node.js:** Se instaló Node.js (versión LTS 24.14.0) mediante NVM para gestionar el entorno de ejecución del cliente.
 * **Docker y Docker-Compose:** Instalados de forma nativa para la futura orquestación de servicios y dependencias.
-* **PHP, Composer y Laravel:** Instalación de PHP y Composer completada con éxito. Se ha inicializado el framework Laravel para comenzar con el desarrollo de la API REST del backend y la gestión de la base de datos PostgreSQL.
+* * **PHP, Composer y Laravel:** Instalación de PHP (8.3) y Composer completada. Se resolvieron las dependencias nativas del sistema (`php-xml`, `php-dom`) para permitir la compilación del framework. Se ha inicializado con éxito un proyecto en Laravel 11 en el directorio `/backend` que actuará como API REST.
+* **Base de Datos (PostgreSQL):** Configuración del motor de base de datos relacional PostgreSQL. Se ha creado la base de datos `evaluacion_infantil` y se ha establecido la conexión nativa desde el entorno de Laravel (`.env` configurado con el driver `pgsql`).
+* **Gestión de Datos (DBeaver):** Instalación de DBeaver Community Edition como cliente gráfico (GUI) para la administración visual, modelado y supervisión directa de las tablas de PostgreSQL.
 
 ## Configuración del Frontend
 El frontend se ha inicializado dentro de la carpeta `/frontend` utilizando la herramienta oficial de Vue.
