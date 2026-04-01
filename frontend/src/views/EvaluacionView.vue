@@ -2,24 +2,25 @@
 import { ref } from 'vue'
 import { criteriosEvaluacion } from '../data/criterios'
 
-// 1. Cargamos el primer criterio de nuestro archivo de datos
-const criterio = criteriosEvaluacion[0]
+// 1. Usamos TODOS los criterios, no solo el primero
+const criterios = criteriosEvaluacion
 
-// 2. Variable reactiva para guardar la nota que elige el profesor
-// Empieza en null (ninguna seleccionada)
-const notaSeleccionada = ref<number | null>(null)
+// 2. Variable reactiva para guardar las notas.
+// Será un objeto donde la clave es el ID del criterio y el valor es la nota (1, 2, 3 o 4)
+// Ejemplo: { "1.1": 4, "1.2": 2, "3.3": 3 }
+const notasSeleccionadas = ref<Record<string, number>>({})
 
-// 3. Función que se ejecuta al hacer clic en una cajita
-const seleccionarNota = (valor: number) => {
-  notaSeleccionada.value = valor
+// 3. Función para guardar la nota de un criterio específico
+const seleccionarNota = (criterioId: string, valor: number) => {
+  notasSeleccionadas.value[criterioId] = valor
 }
 </script>
 
 <template>
   <div class="pantalla">
-    <h1>Evaluar Alumno</h1>
+    <h1>Evaluar Alumno: (Nombre del Alumno irá aquí)</h1>
 
-    <div class="tarjeta-criterio">
+    <div v-for="criterio in criterios" :key="criterio.id" class="tarjeta-criterio">
 
       <div class="cabecera">
         <h2>{{ criterio.titulo }}</h2>
@@ -31,8 +32,8 @@ const seleccionarNota = (valor: number) => {
           v-for="nivel in criterio.niveles"
           :key="nivel.valor"
           class="caja-nivel"
-          :class="{ 'activa': notaSeleccionada === nivel.valor }"
-          @click="seleccionarNota(nivel.valor)"
+          :class="{ 'activa': notasSeleccionadas[criterio.id] === nivel.valor }"
+          @click="seleccionarNota(criterio.id, nivel.valor)"
         >
           <h3>{{ nivel.etiqueta }}</h3>
           <p>{{ nivel.texto }}</p>
@@ -40,14 +41,20 @@ const seleccionarNota = (valor: number) => {
       </div>
 
     </div>
+
+    <button class="btn-guardar" @click="console.log('Notas a guardar:', notasSeleccionadas)">
+      Guardar Evaluación
+    </button>
   </div>
 </template>
 
 <style scoped>
-/* Estilos para que se parezca a tu idea original */
+/* Los estilos siguen siendo los mismos */
 .pantalla {
   padding: 10px;
   font-family: sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .tarjeta-criterio {
@@ -57,6 +64,7 @@ const seleccionarNota = (valor: number) => {
   padding: 24px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
   margin-top: 20px;
+  margin-bottom: 30px; /* Separación entre tarjetas */
 }
 
 .cabecera h2 {
@@ -73,14 +81,12 @@ const seleccionarNota = (valor: number) => {
   font-size: 1.1em;
 }
 
-/* La cuadrícula de 4 columnas */
 .niveles-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
-/* El diseño de cada botón/cajita */
 .caja-nivel {
   border: 2px solid #e5e7eb;
   border-radius: 8px;
@@ -91,16 +97,14 @@ const seleccionarNota = (valor: number) => {
   flex-direction: column;
 }
 
-/* Efecto al pasar el ratón */
 .caja-nivel:hover {
   border-color: #9ca3af;
   background-color: #f9fafb;
 }
 
-/* Efecto cuando el profesor hace clic (Seleccionado) */
 .caja-nivel.activa {
-  border-color: #10b981; /* Verde */
-  background-color: #ecfdf5; /* Fondo verde muy clarito */
+  border-color: #10b981;
+  background-color: #ecfdf5;
 }
 
 .caja-nivel h3 {
@@ -115,16 +119,27 @@ const seleccionarNota = (valor: number) => {
   color: #6b7280;
 }
 
-/* Diseño responsive: Si la pantalla es pequeña (móvil/tablet), poner uno debajo del otro */
+.btn-guardar {
+  margin-top: 20px;
+  padding: 15px 30px;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.2em;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+}
+.btn-guardar:hover {
+  background-color: #059669;
+}
+
 @media (max-width: 1024px) {
-  .niveles-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  .niveles-grid { grid-template-columns: repeat(2, 1fr); }
 }
 
 @media (max-width: 600px) {
-  .niveles-grid {
-    grid-template-columns: 1fr;
-  }
+  .niveles-grid { grid-template-columns: 1fr; }
 }
 </style>
