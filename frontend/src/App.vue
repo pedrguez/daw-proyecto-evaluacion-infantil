@@ -1,3 +1,4 @@
+// Este es el componente raíz de la aplicación. Aquí se define la estructura básica y se incluyen las rutas principales.
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 </script>
