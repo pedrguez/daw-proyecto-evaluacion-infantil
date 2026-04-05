@@ -18,7 +18,7 @@ import { RouterLink, RouterView } from 'vue-router'
 </template>
 
 <style scoped>
-/* Unos estilos básicos para que no se vea feo mientras hacemos pruebas */
+/* Estilos básicos */
 .menu {
   background-color: #f3f4f6;
   padding: 15px;

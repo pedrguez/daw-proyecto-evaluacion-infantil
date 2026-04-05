@@ -32,4 +32,13 @@ class ControladorPrueba extends Controller
 
         return response()->json(['mensaje' => 'Alumno guardado correctamente']);
     }
+    
+    // Función para obtener un alumno por ID
+    public function obtenerAlumno($id) {
+    $alumno = Alumno::find($id); // Busca por ID
+    if (!$alumno) {
+        return response()->json(['mensaje' => 'No encontrado'], 404);
+    }
+    return response()->json($alumno);
+}
 }

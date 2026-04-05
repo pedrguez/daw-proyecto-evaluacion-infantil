@@ -1,10 +1,19 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 
+type Alumno = {
+  id: number
+  nombre: string
+  apellidos: string
+  fecha_nacimiento: string
+  curso: string
+  observaciones: string
+}
+
 // 1. NUEVA VARIABLE PARA CONTROLAR LA UX (Oculto por defecto)
 const mostrarFormulario = ref(false)
 
-const alumnos = ref([])
+const alumnos = ref<Alumno[]>([])
 const nuevoAlumno = ref({
   nombre: '',
   apellidos: '',
@@ -100,7 +109,9 @@ onMounted(obtenerAlumnos)
           <td>{{ alumno.curso }}</td>
           <td class="truncar-texto">{{ alumno.observaciones || '---' }}</td>
           <td>
-            <button class="btn-ficha">Ver Ficha</button>
+            <router-link :to="'/alumno/' + alumno.id" class="btn-ficha">
+              Ver Ficha
+            </router-link>
           </td>
         </tr>
       </tbody>
@@ -137,6 +148,6 @@ textarea { padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: ve
 .tabla-alumnos th { background-color: #f3f4f6; color: #374151; }
 .truncar-texto { max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #6b7280; font-style: italic; }
 
-.btn-ficha { background-color: #6366f1; color: white; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background 0.2s; }
+.btn-ficha { display: inline-block; background-color: #6366f1; color: white; text-decoration: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background 0.2s; }
 .btn-ficha:hover { background-color: #4f46e5; }
 </style>

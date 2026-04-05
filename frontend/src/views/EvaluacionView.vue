@@ -1,9 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { criteriosEvaluacion } from '../data/criterios'
+
+type Alumno = {
+  id: number
+  nombre: string
+  apellidos: string
+  fecha_nacimiento: string
+  curso: string
+  observaciones: string
+}
 
 // 1. Usamos TODOS los criterios, no solo el primero
 const criterios = criteriosEvaluacion
+const route = useRoute()
+const alumno = ref<Alumno | null>(null)
+const idAlumno = route.params.id ? String(route.params.id) : null
 
 // 2. Variable reactiva para guardar las notas.
 // Será un objeto donde la clave es el ID del criterio y el valor es la nota (1, 2, 3 o 4)
@@ -14,11 +27,22 @@ const notasSeleccionadas = ref<Record<string, number>>({})
 const seleccionarNota = (criterioId: string, valor: number) => {
   notasSeleccionadas.value[criterioId] = valor
 }
+
+const obtenerAlumno = async () => {
+  if (!idAlumno) {
+    return
+  }
+
+  const res = await fetch(`http://localhost:8000/api/alumnos/${idAlumno}`)
+  alumno.value = await res.json() as Alumno
+}
+
+onMounted(obtenerAlumno)
 </script>
 
 <template>
   <div class="pantalla">
-    <h1>Evaluar Alumno: (Nombre del Alumno irá aquí)</h1>
+    <h1>Evaluar Alumno: {{ alumno ? alumno.nombre + ' ' + alumno.apellidos : 'Sin seleccionar' }}</h1>
 
     <div v-for="criterio in criterios" :key="criterio.id" class="tarjeta-criterio">
 
