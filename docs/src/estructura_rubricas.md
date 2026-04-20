@@ -30,3 +30,13 @@ Para facilitar la consulta desde el Frontend sin necesidad de procesar JSON comp
 * `rubrica_2`: Text (Adecuado)
 * `rubrica_3`: Text (Muy Adecuado)
 * `rubrica_4`: Text (Excelente)
+
+
+## Automatización de la Carga de Datos (Seeders)
+
+Para garantizar la integridad y la portabilidad del sistema, se ha implementado un mecanismo de **Seeders** en Laravel. Esto permite regenerar toda la normativa educativa en la base de datos de forma automática, eliminando la dependencia de carga manual o inyección de datos estáticos en el Frontend.
+
+### Flujo de trabajo implementado:
+1. **Definición del modelo**: Configuración de modelos Eloquent con `$guarded = []` para permitir la asignación masiva de datos estructurados.
+2. **Generación del Sembrador**: Creación de `RubricasSeeder`, una clase encargada de instanciar las entidades (`Area`, `Competencia`, `Criterio`) con los textos oficiales.
+3. **Persistencia**: Ejecución mediante `php artisan db:seed`, que dispara una transacción atómica para poblar las tablas relacionadas en PostgreSQL, garantizando que el árbol de competencias esté perfectamente vinculado desde el primer segundo.
