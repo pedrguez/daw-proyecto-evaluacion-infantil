@@ -104,7 +104,7 @@ onMounted(obtenerDetalles)
     <div class="seccion-evaluar">
       <h2>Panel de Evaluación</h2>
       <p>Accede a la rúbrica interactiva para calificar el progreso de este alumno.</p>
-      <router-link :to="'/evaluacion'" class="btn-evaluar">Ir a la Rúbrica de Evaluación</router-link>
+      <router-link :to="`/evaluacion/${alumno.id}`" class="btn-evaluar">Ir a la Rúbrica de Evaluación</router-link>
     </div>
   </div>
 </template>

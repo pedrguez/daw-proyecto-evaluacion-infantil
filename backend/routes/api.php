@@ -13,3 +13,6 @@ Route::get('/alumnos/{id}', [ControladorPrueba::class, 'obtenerAlumno']); // Obt
 // Rutas de Edición y Borrado
 Route::put('/alumnos/{id}', [ControladorPrueba::class, 'actualizarAlumno']); // PUT es para actualizar
 Route::delete('/alumnos/{id}', [ControladorPrueba::class, 'eliminarAlumno']); // DELETE es para borrar
+// Ruta para guardar la evaluación (usamos POST porque estamos enviando un paquete de datos grande)
+Route::post('/evaluacion', [ControladorPrueba::class, 'guardarEvaluacion']);
+Route::get('/rubricas', [ControladorPrueba::class, 'obtenerRubricas']);
