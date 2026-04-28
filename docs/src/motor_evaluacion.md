@@ -34,3 +34,19 @@ Se ha integrado un "Modo Edición" activado por el usuario. Al habilitarse:
 Para la operación de "Dar de baja", se han implementado dos capas de seguridad:
 1. **Confirmación nativa:** Vue invoca la API del navegador (`window.confirm`) para prevenir clics accidentales.
 2. **Redirección de flujo:** Tras enviar la petición `DELETE` a Laravel, el framework Vue Router (`useRouter()`) intercepta la promesa de éxito y redirige automáticamente al usuario de vuelta al índice principal (`/alumnos`), evitando "pantallas fantasma".
+   
+# Lógica del Motor de Evaluación
+
+El sistema ha pasado de un modelo estático a un modelo **idempotente y dinámico** conectado con el Backend.
+
+## 1. Carga Dinámica de Calificaciones
+Al acceder a la interfaz o cambiar el trimestre, el sistema ejecuta una petición `GET` al endpoint `/api/evaluacion/{id}/{trimestre}`. 
+- La lógica recorre el árbol de la rúbrica y "pinta" las notas existentes.
+- Se utiliza un `watch` en Vue para reaccionar al cambio de trimestre y recargar los datos automáticamente.
+
+## 2. Persistencia Idempotente (Guardado)
+El proceso de guardado utiliza la función `updateOrCreate` de Eloquent en Laravel.
+- **Flujo:** El frontend envía un paquete JSON con todas las notas marcadas.
+- **Acción:** El servidor busca si ya existe un registro con ese `alumno_id`, `criterio_id` y `trimestre`. 
+  - Si existe: Actualiza el valor.
+  - Si no existe: Crea el nuevo registro.

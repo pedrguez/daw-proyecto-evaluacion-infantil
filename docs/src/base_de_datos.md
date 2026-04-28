@@ -66,3 +66,20 @@ Cuando el proyecto ya está en marcha y necesitamos añadir un nuevo dato a reco
 1. **Actualizar la Variable Reactiva:** En el `<script setup>`, añadir el nuevo campo al estado inicial del formulario para que Vue sepa que existe: `observaciones: ''`.
 2. **Actualizar el Formulario HTML:** Añadir el `<input>` o `<textarea>` correspondiente y vincularlo con `v-model="nuevoAlumno.observaciones"`.
 3. **Actualizar la Tabla Visual:** Añadir una nueva columna `<th>` en la cabecera y su celda `<td>` correspondiente para pintar el dato que devuelve el servidor.
+
+## Tabla: Notas (Evaluaciones)
+Esta tabla actúa como puente entre los alumnos y los criterios de evaluación, permitiendo almacenar una calificación única por trimestre.
+
+### Estructura de la tabla `notas`
+| Campo | Tipo | Descripción |
+| :--- | :--- | :--- |
+| `id` | BigInt | Clave primaria. |
+| `alumno_id` | Foreign Key | Relación con la tabla `alumnos` (onDelete: cascade). |
+| `criterio_id` | Foreign Key | Relación con la tabla `criterios` (onDelete: cascade). |
+| `trimestre` | Integer | Identificador del periodo (1, 2 o 3). |
+| `valor` | Integer | Calificación numérica (1 a 4). |
+
+### Restricción de Integridad (Unique Constraint)
+Se ha implementado una clave única compuesta para evitar duplicidad de datos:
+`UNIQUE(alumno_id, criterio_id, trimestre)`
+Esto garantiza que un alumno no pueda tener dos notas diferentes para el mismo criterio en el mismo periodo.
