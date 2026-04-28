@@ -103,4 +103,13 @@ class ControladorPrueba extends Controller
         $areas = Area::with('competencias.criterios')->get();
         return response()->json($areas);
     }
+
+    // Función para devolver las notas de un niño en un trimestre concreto
+    public function obtenerNotas($alumno_id, $trimestre) {
+        $notas = Nota::where('alumno_id', $alumno_id)
+                     ->where('trimestre', $trimestre)
+                     ->get();
+
+        return response()->json($notas);
+    }
 }

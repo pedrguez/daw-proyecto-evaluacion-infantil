@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
+
 
 const route = useRoute()
 const alumnoId = route.params.id
@@ -66,6 +67,41 @@ const cargarRubrica = async () => {
     console.error("Error al cargar las rúbricas:", error)
   }
 }
+// 3.5 DESCARGAR LAS NOTAS GUARDADAS
+const cargarNotas = async () => {
+  try {
+    const res = await fetch(`http://localhost:8000/api/evaluacion/${alumnoId}/${trimestreActivo.value}`)
+    const notasGuardadas = await res.json()
+
+    // 1. Primero, borramos (ponemos a null) todas las notas por si venimos de otro trimestre
+    areas.value.forEach((area: Area) => {
+      area.competencias.forEach((comp: Competencia) => {
+        comp.criterios.forEach((crit: Criterio) => {
+          crit.nota = null
+        })
+      })
+    })
+
+    // 2. Pintamos las notas que vienen de la base de datos
+    notasGuardadas.forEach((notaGuardada: any) => {
+      areas.value.forEach((area: Area) => {
+        area.competencias.forEach((comp: Competencia) => {
+          const criterioEncontrado = comp.criterios.find(c => c.id === notaGuardada.criterio_id)
+          if (criterioEncontrado) {
+            criterioEncontrado.nota = notaGuardada.valor // ¡Aquí se marca el botón automáticamente!
+          }
+        })
+      })
+    })
+  } catch (error) {
+    console.error("Error al cargar las notas guardadas:", error)
+  }
+}
+
+// Si el profesor cambia el Trimestre en el desplegable recargamos las notas
+watch(trimestreActivo, () => {
+  cargarNotas()
+})
 
 // 4. GUARDAR NOTAS EN LARAVEL
 const guardarEvaluacionFinal = async () => {
@@ -151,7 +187,11 @@ const mediaGlobal = computed(() => {
 
 const puntuar = (criterio: Criterio, valor: number) => { criterio.nota = valor }
 
-onMounted(cargarRubrica)
+onMounted(async () => {
+  await cargarRubrica()
+  await cargarNotas() // Cargamos las notas después de tener la estructura
+})
+
 </script>
 <template>
   <div class="contenedor-evaluacion">

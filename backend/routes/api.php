@@ -16,3 +16,5 @@ Route::delete('/alumnos/{id}', [ControladorPrueba::class, 'eliminarAlumno']); //
 // Ruta para guardar la evaluación (usamos POST porque estamos enviando un paquete de datos grande)
 Route::post('/evaluacion', [ControladorPrueba::class, 'guardarEvaluacion']);
 Route::get('/rubricas', [ControladorPrueba::class, 'obtenerRubricas']);
+// Ruta para obtener las áreas con sus competencias y criterios
+Route::get('/evaluacion/{alumno_id}/{trimestre}', [ControladorPrueba::class, 'obtenerNotas']);
