@@ -10,3 +10,6 @@ Dado que el proyecto utiliza una arquitectura desacoplada (Frontend en Vue 3 y B
 
 ## Configuración del Modelo de Usuario
 Se ha modificado el modelo principal de la base de datos (`User.php`) añadiendo el trait `HasApiTokens` para permitir la emisión y validación de credenciales en la API.
+
+composer require laravel/breeze --dev
+php artisan breeze:install api
