@@ -83,3 +83,6 @@ Esta tabla actúa como puente entre los alumnos y los criterios de evaluación, 
 Se ha implementado una clave única compuesta para evitar duplicidad de datos:
 `UNIQUE(alumno_id, criterio_id, trimestre)`
 Esto garantiza que un alumno no pueda tener dos notas diferentes para el mismo criterio en el mismo periodo.
+
+## Normativa Oficial (LOMLOE)
+El sistema cuenta con un `RubricasSeeder` que inyecta automáticamente la estructura curricular completa de Educación Infantil (Áreas 1, 2 y 3) basándose en los textos oficiales, garantizando que el sistema esté listo para producción sin necesidad de carga manual. `php artisan db:seed --class=RubricasSeeder`

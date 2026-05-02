@@ -112,4 +112,10 @@ class ControladorPrueba extends Controller
 
         return response()->json($notas);
     }
+
+    // Función para obtener TODAS las notas de un alumno (para el boletín)
+    public function obtenerTodasLasNotas($alumno_id) {
+        $notas = Nota::where('alumno_id', $alumno_id)->get();
+        return response()->json($notas);
+    }
 }

@@ -18,3 +18,5 @@ Route::post('/evaluacion', [ControladorPrueba::class, 'guardarEvaluacion']);
 Route::get('/rubricas', [ControladorPrueba::class, 'obtenerRubricas']);
 // Ruta para obtener las áreas con sus competencias y criterios
 Route::get('/evaluacion/{alumno_id}/{trimestre}', [ControladorPrueba::class, 'obtenerNotas']);
+// Ruta para obtener TODAS las notas de un alumno (para el boletín)
+Route::get('/alumnos/{id}/notas', [ControladorPrueba::class, 'obtenerTodasLasNotas']);
