@@ -42,6 +42,15 @@ const obtenerNota = (criterioId: number, trimestre: number) => {
   return nota ? nota.valor : '-'
 }
 
+// Convierte el número de la base de datos en texto para las familias
+const obtenerTextoNota = (valor: number | string) => {
+  if (valor === 1) return 'Poco Adecuado'
+  if (valor === 2) return 'Adecuado'
+  if (valor === 3) return 'Muy Adecuado'
+  if (valor === 4) return 'Excelente'
+  return '-'
+}
+
 // 4. Guardar cambios del perfil (tu código anterior)
 const guardarCambios = async () => {
   try {
@@ -125,10 +134,13 @@ onMounted(async () => {
             </thead>
             <tbody>
               <tr v-for="crit in comp.criterios" :key="crit.id">
-                <td class="celda-criterio">{{ crit.identificador }}. {{ crit.texto }}</td>
-                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 1)">{{ obtenerNota(crit.id, 1) }}</td>
-                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 2)">{{ obtenerNota(crit.id, 2) }}</td>
-                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 3)">{{ obtenerNota(crit.id, 3) }}</td>
+                <td class="celda-criterio">{{ crit.texto }}</td>
+                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 1)">
+                  {{ obtenerTextoNota(obtenerNota(crit.id, 1)) }}</td>
+                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 2)">
+                  {{ obtenerTextoNota(obtenerNota(crit.id, 2)) }}</td>
+                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 3)">
+                  {{ obtenerTextoNota(obtenerNota(crit.id, 3)) }}</td>
               </tr>
             </tbody>
           </table>

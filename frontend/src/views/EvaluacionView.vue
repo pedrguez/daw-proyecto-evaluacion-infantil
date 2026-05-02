@@ -227,7 +227,7 @@ onMounted(async () => {
         <div class="texto-competencia"><strong>Competencia específica:</strong> {{ competencia.texto }}</div>
 
         <div v-for="criterio in competencia.criterios" :key="criterio.id" class="bloque-criterio">
-          <div class="texto-criterio"><strong>Criterio {{ criterio.identificador }}:</strong> {{ criterio.texto }}</div>
+          <div class="texto-criterio"><strong>Criterio {{ criterio.identificador }}:</strong> {{ criterio.texto.replace(/^[0-9.]+\s*/, '') }}</div>
 
           <div class="grid-rubrica">
             <div v-for="nivel in escala" :key="nivel.valor" class="tarjeta-rubrica" :class="{ 'seleccionada': criterio.nota === nivel.valor }" :style="{ borderColor: criterio.nota === nivel.valor ? nivel.borde : 'transparent', backgroundColor: criterio.nota === nivel.valor ? nivel.color : '#f9fafb' }" @click="puntuar(criterio, nivel.valor)">
