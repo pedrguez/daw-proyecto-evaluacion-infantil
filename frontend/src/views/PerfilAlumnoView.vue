@@ -1,17 +1,31 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute} from 'vue-router'
 
+// 1. Definimos los "moldes" (Interfaces) de nuestros datos
+interface Alumno {
+  id: number;
+  nombre: string;
+  apellidos: string;
+  fecha_nacimiento: string;
+  observaciones: string;
+}
+
+interface NotaGuardada {
+  id: number;
+  alumno_id: number;
+  criterio_id: number;
+  trimestre: number;
+  valor: number;
+}
 const route = useRoute()
-const router = useRouter()
 const alumnoId = route.params.id
-
-const alumno = ref<any>(null)
+const alumno = ref<Alumno | null>(null)
 const modoEdicion = ref(false)
 
 // NUEVAS VARIABLES PARA EL BOLETÍN
 const rubricaCompleta = ref<any[]>([])
-const notasAlumno = ref<any[]>([])
+const notasAlumno = ref<NotaGuardada[]>([])
 
 // 1. Cargar datos básicos del alumno
 const cargarAlumno = async () => {

@@ -36,7 +36,7 @@ class ControladorPrueba extends Controller
     }
 
     // Función para obtener un alumno por ID
-    public function obtenerAlumno($id) {
+    public function obtenerAlumno(int $id) {
     $alumno = Alumno::find($id); // Busca por ID
     if (!$alumno) {
         return response()->json(['mensaje' => 'No encontrado'], 404);
@@ -45,7 +45,7 @@ class ControladorPrueba extends Controller
     }
 
     // Función para actualizar los datos de un alumno
-    public function actualizarAlumno(Request $request, $id) {
+    public function actualizarAlumno(Request $request, int $id) {
         $alumno = Alumno::find($id);
         if (!$alumno) {
             return response()->json(['mensaje' => 'Alumno no encontrado'], 404);
@@ -62,7 +62,7 @@ class ControladorPrueba extends Controller
     }
 
     // Función para dar de baja (borrar) a un alumno
-    public function eliminarAlumno($id) {
+    public function eliminarAlumno(int $id) {
         $alumno = Alumno::find($id);
         if (!$alumno) {
             return response()->json(['mensaje' => 'Alumno no encontrado'], 404);
@@ -105,7 +105,7 @@ class ControladorPrueba extends Controller
     }
 
     // Función para devolver las notas de un niño en un trimestre concreto
-    public function obtenerNotas($alumno_id, $trimestre) {
+    public function obtenerNotas(int $alumno_id, int $trimestre) {
         $notas = Nota::where('alumno_id', $alumno_id)
                      ->where('trimestre', $trimestre)
                      ->get();
@@ -114,7 +114,7 @@ class ControladorPrueba extends Controller
     }
 
     // Función para obtener TODAS las notas de un alumno (para el boletín)
-    public function obtenerTodasLasNotas($alumno_id) {
+    public function obtenerTodasLasNotas(int $alumno_id) {
         $notas = Nota::where('alumno_id', $alumno_id)->get();
         return response()->json($notas);
     }
