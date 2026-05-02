@@ -50,3 +50,13 @@ El proceso de guardado utiliza la función `updateOrCreate` de Eloquent en Larav
 - **Acción:** El servidor busca si ya existe un registro con ese `alumno_id`, `criterio_id` y `trimestre`. 
   - Si existe: Actualiza el valor.
   - Si no existe: Crea el nuevo registro.
+
+## Boletín de Calificaciones (Informe para Familias)
+
+Para facilitar la comunicación de los resultados académicos a las familias, el perfil individual de cada alumno incluye un **Boletín de Calificaciones dinámico**.
+
+### Características de la interfaz:
+1. **Visión Global:** Genera automáticamente una tabla matricial que cruza los Criterios de Evaluación con los tres trimestres del curso (T1, T2, T3).
+2. **Traducción Cualitativa:** Aunque la base de datos almacena las calificaciones como valores numéricos enteros (1-4) para facilitar el cálculo de medias, el Frontend incluye un parser que traduce estos valores a la escala cualitativa oficial (*Poco Adecuado, Adecuado, Muy Adecuado, Excelente*) en la vista del boletín.
+3. **Limpieza de Datos (Sanitización):** Se han implementado Expresiones Regulares (RegEx) en Vue `replace(/^[0-9.]+\s*/, '')` para limpiar los identificadores numéricos que provienen de la base de datos y evitar duplicidades visuales en la interfaz, ofreciendo una lectura mucho más limpia.
+4. **Diseño Visual:** El sistema utiliza clases dinámicas en Vue (`:class="'nota-' + valor"`) para asignar un código de colores intuitivo a cada nivel de logro.
