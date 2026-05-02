@@ -30,6 +30,27 @@ interface Area {
   nombre: string;
   competencias: Competencia[];
 }
+
+interface Criterio {
+  id: number;
+  identificador: string;
+  texto: string;
+}
+
+interface Competencia {
+  id: number;
+  texto: string;
+  criterios: Criterio[];
+}
+
+interface NotaGuardada {
+  id: number;
+  alumno_id: number;
+  criterio_id: number;
+  trimestre: number;
+  valor: number;
+}
+
 // -------------------------------------------------------------------
 
 // 1. ESCALA DE EVALUACIÓN
@@ -83,7 +104,7 @@ const cargarNotas = async () => {
     })
 
     // 2. Pintamos las notas que vienen de la base de datos
-    notasGuardadas.forEach((notaGuardada: any) => {
+    notasGuardadas.forEach((notaGuardada: NotaGuardada) => {
       areas.value.forEach((area: Area) => {
         area.competencias.forEach((comp: Competencia) => {
           const criterioEncontrado = comp.criterios.find(c => c.id === notaGuardada.criterio_id)

@@ -19,3 +19,9 @@ Se han definido interfaces para evitar errores de "undefined" durante la carga:
 Se ha corregido el enrutamiento dinámico en `PerfilAlumnoView.vue` utilizando *Template Literals* para inyectar correctamente el ID del alumno en la URL:
 ```typescript
 router.push(`/evaluacion/${alumno.id}`)
+
+## Cliente HTTP (Axios) e Integración con Sanctum
+Para la gestión de la autenticación se ha sustituido la API nativa `fetch` por **Axios**. Se ha creado una instancia global (`axios.ts`) configurada con la propiedad `withCredentials: true`. Esto es un requisito indispensable para la arquitectura SPA (Single Page Application), ya que permite a Vue recibir y enviar automáticamente las cookies de seguridad (CSRF tokens) generadas por Laravel Sanctum en cada petición.
+
+## Tipado Estricto (TypeScript)
+Para asegurar la robustez del Frontend y eliminar la vulnerabilidad a errores en tiempo de ejecución, se han eliminado los tipos genéricos (`any`) implementando **Interfaces** exactas que mapean la estructura de la base de datos (Modelos: `Alumno`, `Area`, `Competencia`, `Criterio`, `NotaGuardada`). Asimismo, el `ControladorPrueba` del Backend ha sido tipado fuertemente.

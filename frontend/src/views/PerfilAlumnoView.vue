@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute} from 'vue-router'
 
-// 1. Definimos los "moldes" (Interfaces) de nuestros datos
+// Definimos los moldes de nuestros datos
 interface Alumno {
   id: number;
   nombre: string;
@@ -18,13 +18,32 @@ interface NotaGuardada {
   trimestre: number;
   valor: number;
 }
+
+interface Criterio {
+  id: number;
+  identificador: string;
+  texto: string;
+}
+
+interface Competencia {
+  id: number;
+  texto: string;
+  criterios: Criterio[];
+}
+
+interface Area {
+  id: number;
+  nombre: string;
+  competencias: Competencia[];
+}
+
 const route = useRoute()
 const alumnoId = route.params.id
 const alumno = ref<Alumno | null>(null)
 const modoEdicion = ref(false)
 
 // NUEVAS VARIABLES PARA EL BOLETÍN
-const rubricaCompleta = ref<any[]>([])
+const rubricaCompleta = ref<Area[]>([])
 const notasAlumno = ref<NotaGuardada[]>([])
 
 // 1. Cargar datos básicos del alumno
