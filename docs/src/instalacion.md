@@ -23,3 +23,6 @@ Se ha configurado la base del proyecto para cumplir con los siguientes requisito
 ### Desarrollo de la Interfaz (UI)
 * **Sistema de Enrutamiento:** Se ha implementado la navegación tipo SPA (Single Page Application) que permite alternar entre las distintas vistas de manera fluida.
 * **Componente de Evaluación:** Se ha diseñado la primera pantalla interactiva para la calificación de alumnos. El componente renderiza dinámicamente los criterios de la rúbrica LOMLOE a partir de una estructura de datos externa (`criterios.ts`). El diseño base se ha planteado de forma interactiva y *responsive* para su uso en tablets y dispositivos móviles.
+
+## Gestión de Estado Global (Pinia)
+Para la gestión reactiva del estado de la aplicación, se ha implementado **Pinia**. Se ha creado un `authStore` que centraliza la lógica de autenticación. El uso de un almacén centralizado permite que componentes como la barra de navegación (`App.vue`) y el sistema de protección de rutas reaccionen instantáneamente a los cambios en la sesión del usuario, garantizando una experiencia de usuario fluida y desacoplada del almacenamiento físico (`localStorage`).

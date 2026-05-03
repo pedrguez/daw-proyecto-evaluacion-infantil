@@ -1,44 +1,30 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { useAuthStore } from './stores/auth' // Importamos el almacén
 
-const route = useRoute()
+const auth = useAuthStore() // Usamos el almacén
 const router = useRouter()
 
-// Variable reactiva que controla si el menú se ve o no
-const estaAutenticado = ref(localStorage.getItem('auth') === 'true')
-
-// Vigilamos cada vez que el usuario cambia de página para actualizar el menú
-watch(() => route.path, () => {
-  estaAutenticado.value = localStorage.getItem('auth') === 'true'
-})
-
-// Función para Cerrar Sesión
 const cerrarSesion = () => {
-  localStorage.removeItem('auth') // Le quitamos la "cookie de seguridad"
-  estaAutenticado.value = false   // Ocultamos el menú
-  router.push('/')                // Lo echamos al Login
+  auth.logout() // Llamamos a la acción de Pinia
+  router.push('/')
 }
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-      <nav>
-        <template v-if="!estaAutenticado">
-          <RouterLink to="/">Login</RouterLink>
-        </template>
+    <nav>
+      <template v-if="!auth.estaAutenticado">
+        <RouterLink to="/">Login</RouterLink>
+      </template>
 
-        <template v-if="estaAutenticado">
-          <RouterLink to="/dashboard">Dashboard</RouterLink>
-          <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
-          <RouterLink to="/evaluacion">Evaluar</RouterLink>
-          <a href="#" @click.prevent="cerrarSesion" class="btn-logout">Cerrar Sesión</a>
-        </template>
-      </nav>
-    </div>
+      <template v-if="auth.estaAutenticado">
+        <RouterLink to="/dashboard">Dashboard</RouterLink>
+        <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
+        <button @click="cerrarSesion" class="btn-logout">Cerrar Sesión</button>
+      </template>
+    </nav>
   </header>
-
   <RouterView />
 </template>
 

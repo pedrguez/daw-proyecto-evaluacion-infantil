@@ -2,7 +2,8 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../axios' // Importamos el axios que acabamos de configurar
-
+import { useAuthStore } from '../stores/auth'
+const auth = useAuthStore()
 const router = useRouter()
 const email = ref('')
 const password = ref('')
@@ -11,18 +12,17 @@ const mensajeError = ref('')
 const iniciarSesion = async () => {
   mensajeError.value = ''
   try {
-    // 1. Pedimos la "cookie de seguridad" a Laravel Sanctum
+    //  Pedimos la "cookie de seguridad" a Laravel Sanctum
     await api.get('/sanctum/csrf-cookie')
 
-    // 2. Enviamos el email y contraseña
+    //  Enviamos el email y contraseña
     await api.post('/login', {
       email: email.value,
       password: password.value
     })
-    // Si el login es exitoso, Laravel Sanctum establecerá una cookie de sesión automáticamente.
-    localStorage.setItem('auth', 'true')
-    // 3. Si todo va bien, vamos a la lista de alumnos
+    auth.login() // Actualizamos el estado de autenticación en Pinia
     router.push('/alumnos')
+
   } catch (error) {
     mensajeError.value = 'Credenciales incorrectas o error en el servidor.'
     console.error("Error en el login:", error)

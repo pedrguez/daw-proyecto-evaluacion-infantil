@@ -22,3 +22,9 @@ Para garantizar la integridad del panel de gestión (SSG) y evitar el acceso no 
 2. **Navigation Guards:** Se ha configurado un interceptor global (`router.beforeEach`) en `index.ts`. Este guardia verifica de forma reactiva la propiedad `meta: { requiresAuth: true }` de cada ruta. 
 3. **Redirección Segura:** Si un usuario sin credenciales válidas intenta forzar la navegación hacia una ruta protegida (ej. `/alumnos`), el guardia aborta la navegación y lo redirige automáticamente a la vista raíz de Login (`/`).
 4. **Renderizado Condicional:** El menú de navegación principal (`App.vue`) utiliza directivas `v-if` vinculadas al estado de autenticación para mostrar u ocultar los enlaces de acceso dinámicamente, mejorando la usabilidad y la seguridad visual de la interfaz.
+
+## Refactorización de Accesibilidad y Coherencia (UI/UX)
+Para cumplir con los estándares de usabilidad web y accesibilidad, se han realizado los siguientes ajustes en el diseño del Frontend:
+1. **Coherencia Visual:** Se han unificado los componentes de navegación ("Botones de Volver") y las tarjetas del Dashboard, eliminando fondos de alto impacto (negros/colores saturados) para evitar problemas de contraste y facilitar la lectura a usuarios con daltonismo.
+2. **Jerarquía Tipográfica:** Se ha aumentado el peso y tamaño de los encabezados (`h1`, `h2`) en las vistas de evaluación para guiar correctamente el flujo visual del usuario frente a los datos numéricos.
+3. **Limpieza de Navegación:** Se ha eliminado la ruta genérica de "Evaluación" del menú principal superior, ya que arquitectónicamente la evaluación depende estrictamente del contexto de un alumno seleccionado (navegación jerárquica).
