@@ -110,7 +110,9 @@ onMounted(async () => {
   <div v-if="alumno" class="ficha-alumno">
     <header class="cabecera-ficha">
       <div class="navegacion">
-        <router-link to="/alumnos" class="btn-volver">← Volver a la lista</router-link>
+        <button @click="$router.push('/alumnos')" class="btn-volver">
+          ← Volver a la lista
+        </button>
       </div>
       <div class="titulo-perfil">
         <div class="edicion-nombre">
@@ -189,8 +191,8 @@ onMounted(async () => {
 .ficha-alumno { padding: 30px; max-width: 1000px; margin: 0 auto; font-family: sans-serif; color: #374151; }
 .cabecera-ficha { margin-bottom: 30px; }
 .navegacion { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.btn-volver { color: #6366f1; text-decoration: none; font-weight: bold; font-size: 1.1em; }
-.btn-volver:hover { text-decoration: underline; }
+.btn-volver {  background-color: transparent;  color: #475569;  border: 1px solid #cbd5e1;  padding: 8px 16px;  border-radius: 6px;  cursor: pointer;  font-weight: 600;  font-size: 0.95rem;  transition: all 0.2s ease;  margin-bottom: 25px; }
+.btn-volver:hover { background-color: #f1f5f9;  color: #0f172a;  border-color: #94a3b8; }
 .titulo-perfil { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 8px 8px 0 0; border-bottom: 2px solid #e5e7eb; }
 .titulo-perfil h1 { margin: 0; color: #111827; }
 .edicion-nombre { display: flex; gap: 10px; flex: 1; margin-right: 20px; }

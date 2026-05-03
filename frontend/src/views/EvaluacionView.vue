@@ -6,7 +6,7 @@ import { useRoute } from 'vue-router'
 const route = useRoute()
 const alumnoId = route.params.id
 
-// --- DEFINICIÓN DE TIPOS ---
+// Definimos los moldes de nuestros datos
 interface Criterio {
   id: number;
   identificador: string;
@@ -16,7 +16,7 @@ interface Criterio {
   rubrica_3: string | null;
   rubrica_4: string | null;
   nota: number | null;
-  [key: string]: string | number | null; // <-- Adiós al error del "any"
+  [key: string]: string | number | null; // Elimina error de any
 }
 
 interface Competencia {
@@ -218,6 +218,11 @@ onMounted(async () => {
   <div class="contenedor-evaluacion">
 
     <header class="cabecera">
+      <div class="cabecera-navegacion">
+        <button @click="$router.push(`/alumno/${$route.params.id}`)" class="btn-volver">
+          ← Volver al Perfil del Alumno
+        </button>
+      </div>
       <div class="titulos">
         <h2>Evaluación Trimestral</h2>
         <span class="info-alumno">Alumno ID: {{ alumnoId }}</span>
@@ -289,7 +294,7 @@ onMounted(async () => {
 .contenedor-evaluacion { padding: 20px; max-width: 1400px; margin: 0 auto; font-family: sans-serif; color: #374151; }
 .mensaje-carga { text-align: center; font-size: 1.2em; color: #6b7280; padding: 40px; background: #f3f4f6; border-radius: 8px; margin-top: 20px;}
 .cabecera { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; padding-bottom: 15px; }
-.titulos h2 { margin: 0 0 10px 0; color: #111827; }
+.titulos h2 { margin: 0 0 10px 0; color: #0f172a; font-size: 2.4rem; font-weight: 800; }
 .info-alumno { background: #e0e7ff; color: #4338ca; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em; }
 .caja-media { display: flex; align-items: center; gap: 20px; background: #f3f4f6; padding: 15px 25px; border-radius: 8px; border: 1px solid #d1d5db; }
 .media-numerica { font-size: 1.2em; }
@@ -323,4 +328,7 @@ onMounted(async () => {
 .select-trim { font-size: 1em; padding: 5px; border-radius: 4px; border: 1px solid #9ca3af; cursor: pointer;}
 .btn-guardar-final { background: #4f46e5; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background 0.2s; }
 .btn-guardar-final:hover { background: #4338ca; }
+.cabecera-navegacion {  margin-bottom: 20px;}
+.btn-volver {  background-color: transparent; color: #475569;  border: 1px solid #cbd5e1;  padding: 8px 16px;  border-radius: 6px;  cursor: pointer;  font-weight: 600;  font-size: 0.95rem;  transition: all 0.2s ease;  margin-bottom: 25px; }
+.btn-volver:hover {  background-color: #f1f5f9;  color: #0f172a;  border-color: #94a3b8; }
 </style>

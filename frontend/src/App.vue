@@ -68,16 +68,19 @@ nav a:hover, nav a.router-link-active {
 }
 
 nav .btn-logout {
-  color: #dc2626; /* Color rojo para destacar el botón de salir */
+  color: #94a3b8; /* Gris apagado para que no destaque más que el resto */
   margin-left: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
   padding: 5px 10px;
-  border: 1px solid #dc2626;
-  border-radius: 6px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
 }
 
 nav .btn-logout:hover {
-  background-color: #dc2626;
-  color: white;
+  color: #dc2626; /* Solo se pone rojo (peligro) cuando pasas el ratón por encima */
 }
 
 .menu {
