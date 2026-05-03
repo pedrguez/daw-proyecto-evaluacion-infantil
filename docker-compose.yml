@@ -1,0 +1,53 @@
+
+
+services:
+  # 1. Base de datos PostgreSQL
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_db
+    restart: unless-stopped
+    ports:
+      - "5433:5432" # Si ya se tiene un postgres local encendido, se cambia a "5433:5432"
+    environment:
+      POSTGRES_DB: evaluacion_infantil
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secretpassword
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  # 2. Servidor Backend (Laravel)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel_api
+    ports:
+      - "8000:8000"
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_DATABASE=evaluacion_infantil
+      - DB_USERNAME=admin
+      - DB_PASSWORD=secretpassword
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - db
+
+  # 3. Servidor Frontend (Vue)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: vue_app
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+
+volumes:
+  db_data: # Esto evita que los datos se borren al apagar el contenedor
