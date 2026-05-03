@@ -8,7 +8,6 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 
 });
-require __DIR__.'/auth.php';
 
 
 
@@ -29,3 +28,5 @@ Route::get('/rubricas', [ControladorPrueba::class, 'obtenerRubricas']);
 Route::get('/evaluacion/{alumno_id}/{trimestre}', [ControladorPrueba::class, 'obtenerNotas']);
 // Ruta para obtener TODAS las notas de un alumno (para el boletín)
 Route::get('/alumnos/{id}/notas', [ControladorPrueba::class, 'obtenerTodasLasNotas']);
+
+require __DIR__.'/auth.php';
