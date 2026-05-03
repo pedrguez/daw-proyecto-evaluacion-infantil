@@ -9,12 +9,31 @@ import PerfilAlumnoView from '../views/PerfilAlumnoView.vue'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    { path: '/', name: 'login', component: LoginView },
-    { path: '/dashboard', name: 'dashboard', component: DashboardView },
-    { path: '/alumnos', name: 'alumnos', component: AlumnosView },
-    { path: '/evaluacion/:id?', name: 'evaluacion', component: EvaluacionView },
-    { path: '/alumno/:id', name: 'perfil-alumno', component: PerfilAlumnoView }
+    { path: '/', name: 'login', component: LoginView }, // El login es la única sin proteger
+    { path: '/dashboard', name: 'dashboard', component: DashboardView, meta: { requiresAuth: true } },
+    { path: '/alumnos', name: 'alumnos', component: AlumnosView, meta: { requiresAuth: true } },
+    { path: '/evaluacion/:id?', name: 'evaluacion', component: EvaluacionView, meta: { requiresAuth: true } },
+    { path: '/alumno/:id', name: 'perfil-alumno', component: PerfilAlumnoView, meta: { requiresAuth: true } }
   ]
+})
+
+// --- GUARDIA DE NAVEGACIÓN (Protección de Rutas) ---
+router.beforeEach((to, from, next) => {
+  // Verificamos si existe el token de sesión en el almacenamiento local
+  const estaAutenticado = localStorage.getItem('auth') === 'true'
+
+  // Si la ruta requiere autenticación y el usuario no está validado -> Redirigir al Login (raíz)
+  if (to.meta.requiresAuth && !estaAutenticado) {
+    next('/')
+  }
+  // Si el usuario ya está autenticado e intenta acceder de nuevo al Login -> Redirigir a Alumnos
+  else if (to.path === '/' && estaAutenticado) {
+    next('/alumnos')
+  }
+  // En cualquier otro caso, permitir la navegación
+  else {
+    next()
+  }
 })
 
 export default router

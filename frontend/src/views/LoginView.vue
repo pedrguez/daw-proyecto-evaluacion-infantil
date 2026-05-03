@@ -19,7 +19,8 @@ const iniciarSesion = async () => {
       email: email.value,
       password: password.value
     })
-
+    // Si el login es exitoso, Laravel Sanctum establecerá una cookie de sesión automáticamente.
+    localStorage.setItem('auth', 'true')
     // 3. Si todo va bien, vamos a la lista de alumnos
     router.push('/alumnos')
   } catch (error) {

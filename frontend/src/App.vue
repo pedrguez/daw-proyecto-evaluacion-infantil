@@ -1,25 +1,85 @@
-// Este es el componente raíz de la aplicación. Aquí se define la estructura básica y se incluyen las rutas principales.
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { ref, watch } from 'vue'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+
+const route = useRoute()
+const router = useRouter()
+
+// Variable reactiva que controla si el menú se ve o no
+const estaAutenticado = ref(localStorage.getItem('auth') === 'true')
+
+// Vigilamos cada vez que el usuario cambia de página para actualizar el menú
+watch(() => route.path, () => {
+  estaAutenticado.value = localStorage.getItem('auth') === 'true'
+})
+
+// Función para Cerrar Sesión
+const cerrarSesion = () => {
+  localStorage.removeItem('auth') // Le quitamos la "cookie de seguridad"
+  estaAutenticado.value = false   // Ocultamos el menú
+  router.push('/')                // Lo echamos al Login
+}
 </script>
 
 <template>
   <header>
-    <nav class="menu">
-      <RouterLink to="/">Login</RouterLink>
-      <RouterLink to="/dashboard">Dashboard</RouterLink>
-      <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
-      <RouterLink to="/evaluacion">Evaluar</RouterLink>
-    </nav>
+    <div class="wrapper">
+      <nav>
+        <template v-if="!estaAutenticado">
+          <RouterLink to="/">Login</RouterLink>
+        </template>
+
+        <template v-if="estaAutenticado">
+          <RouterLink to="/dashboard">Dashboard</RouterLink>
+          <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
+          <RouterLink to="/evaluacion">Evaluar</RouterLink>
+          <a href="#" @click.prevent="cerrarSesion" class="btn-logout">Cerrar Sesión</a>
+        </template>
+      </nav>
+    </div>
   </header>
 
-  <main class="contenedor">
-    <RouterView />
-  </main>
+  <RouterView />
 </template>
 
 <style scoped>
 /* Estilos básicos */
+nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 25px; /* Espacio entre los botones */
+  padding: 20px;
+  background-color: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 30px;
+}
+
+nav a {
+  text-decoration: none;
+  color: #475569;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+nav a:hover, nav a.router-link-active {
+  color: #4f46e5; /* Color morado cuando pasas el ratón o estás en esa página */
+}
+
+nav .btn-logout {
+  color: #dc2626; /* Color rojo para destacar el botón de salir */
+  margin-left: 20px;
+  padding: 5px 10px;
+  border: 1px solid #dc2626;
+  border-radius: 6px;
+}
+
+nav .btn-logout:hover {
+  background-color: #dc2626;
+  color: white;
+}
+
 .menu {
   background-color: #f3f4f6;
   padding: 15px;

@@ -11,5 +11,14 @@ Dado que el proyecto utiliza una arquitectura desacoplada (Frontend en Vue 3 y B
 ## Configuración del Modelo de Usuario
 Se ha modificado el modelo principal de la base de datos (`User.php`) añadiendo el trait `HasApiTokens` para permitir la emisión y validación de credenciales en la API.
 
-composer require laravel/breeze --dev
-php artisan breeze:install api
+`composer require laravel/breeze --dev`
+`php artisan breeze:install api`
+
+## Protección de Rutas en el Frontend (Navigation Guards)
+
+Para garantizar la integridad del panel de gestión (SSG) y evitar el acceso no autorizado a los datos de los alumnos, se ha implementado un sistema de protección de rutas en el Frontend utilizando las capacidades avanzadas de **Vue Router**.
+
+1. **Gestión de Estado de Sesión:** Tras una autenticación exitosa mediante la API de Laravel, el Frontend almacena un indicador de sesión en el `localStorage` del navegador.
+2. **Navigation Guards:** Se ha configurado un interceptor global (`router.beforeEach`) en `index.ts`. Este guardia verifica de forma reactiva la propiedad `meta: { requiresAuth: true }` de cada ruta. 
+3. **Redirección Segura:** Si un usuario sin credenciales válidas intenta forzar la navegación hacia una ruta protegida (ej. `/alumnos`), el guardia aborta la navegación y lo redirige automáticamente a la vista raíz de Login (`/`).
+4. **Renderizado Condicional:** El menú de navegación principal (`App.vue`) utiliza directivas `v-if` vinculadas al estado de autenticación para mostrar u ocultar los enlaces de acceso dinámicamente, mejorando la usabilidad y la seguridad visual de la interfaz.
