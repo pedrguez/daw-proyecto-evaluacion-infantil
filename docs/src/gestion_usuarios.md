@@ -7,6 +7,28 @@ Para dar cumplimiento a los requisitos del módulo de **Sistemas de Gestión Emp
 
 El sistema utiliza Laravel Sanctum para la autenticación SPA (Single Page Application) basada en cookies.
 
+## Sistema de Roles y Jerarquía (RBAC)
+
+Para cumplir con los requisitos de seguridad y acceso a datos del centro educativo, se ha implementado un sistema de control de acceso basado en roles (Role-Based Access Control). 
+
+Se ha modificado el modelo `User` de Laravel (versión 11, mediante atributos PHP 8) y su correspondiente migración para incluir la columna `rol`.
+
+Existen dos perfiles definidos:
+1. **Profesor (rol por defecto):** Acceso restringido a sus tutorías y diarios de aula.
+2. **Superadministrador (Director):** Acceso global a todos los alumnos, capacidad de crear nuevos profesores y visión completa del estado del centro.
+
+La creación de la cuenta de dirección se realiza exclusivamente por consola de servidor para evitar brechas de seguridad públicas:
+
+```bash
+# Creación del Superadministrador (Director)
+App\Models\User::create([
+    'name' => 'Director', 
+    'email' => 'director@colegio.com', 
+    'password' => bcrypt('12345678'), 
+    'rol' => 'admin'
+]);
+```
+
 ## Creación de Usuarios (Profesores)
 Al no existir un formulario de registro público por motivos de seguridad del centro educativo, los usuarios con rol docente se crean internamente mediante la consola de Laravel:
 
