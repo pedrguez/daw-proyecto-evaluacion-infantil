@@ -5,18 +5,22 @@ import { ref } from 'vue'
 export const useAuthStore = defineStore('auth', () => {
   // Estado: ¿Está el usuario autenticado? (Leemos del localStorage al arrancar)
   const estaAutenticado = ref(localStorage.getItem('auth') === 'true')
+  const nombreUsuario = ref(localStorage.getItem('nombre_usuario') || '')
 
-  // Acción: Iniciar Sesión
-  function login() {
+  // Ahora el login recibe el nombre del profesor
+  function login(nombre: string) {
     estaAutenticado.value = true
+    nombreUsuario.value = nombre
     localStorage.setItem('auth', 'true')
+    localStorage.setItem('nombre_usuario', nombre)
   }
 
-  // Acción: Cerrar Sesión
   function logout() {
     estaAutenticado.value = false
+    nombreUsuario.value = ''
     localStorage.removeItem('auth')
+    localStorage.removeItem('nombre_usuario')
   }
 
-  return { estaAutenticado, login, logout }
+  return { estaAutenticado, nombreUsuario, login, logout }
 })

@@ -21,6 +21,7 @@ const cerrarSesion = () => {
       <template v-if="auth.estaAutenticado">
         <RouterLink to="/dashboard">Dashboard</RouterLink>
         <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
+        <span class="bienvenida">Hola, {{ auth.nombreUsuario }}</span>
         <button @click="cerrarSesion" class="btn-logout">Cerrar Sesión</button>
       </template>
     </nav>

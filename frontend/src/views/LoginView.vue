@@ -12,17 +12,29 @@ const mensajeError = ref('')
 const iniciarSesion = async () => {
   mensajeError.value = ''
   try {
-    //  Pedimos la "cookie de seguridad" a Laravel Sanctum
-    await api.get('/sanctum/csrf-cookie')
+      // Pedimos la "cookie de seguridad" a Laravel Sanctum
+      await api.get('/sanctum/csrf-cookie')
 
-    //  Enviamos el email y contraseña
-    await api.post('/login', {
-      email: email.value,
-      password: password.value
-    })
-    auth.login() // Actualizamos el estado de autenticación en Pinia
-    router.push('/alumnos')
+      // Enviamos el email y contraseña
+      await api.post('/login', {
+        email: email.value,
+        password: password.value
+      })
 
+      // Ya estamos dentro. Ahora pedimos los datos de nuestro usuario
+      const respuestaUser = await api.get('/api/user')
+
+      // ESTE ES EL CHIVATO: Nos mostrará en la consola del navegador qué responde Laravel
+      console.log("Respuesta de Laravel:", respuestaUser.data)
+
+      // Extraemos el nombre con cuidado (por si viene dentro de otro objeto)
+      const nombreProfesor = respuestaUser.data.name || respuestaUser.data.usuario?.name || 'Profesor'
+
+      // Guardamos en Pinia
+      auth.login(nombreProfesor)
+
+      // Redirigimos a la lista
+      router.push('/alumnos')
   } catch (error) {
     mensajeError.value = 'Credenciales incorrectas o error en el servidor.'
     console.error("Error en el login:", error)
