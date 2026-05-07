@@ -2,6 +2,26 @@
 
 Para dar cumplimiento a los requisitos del módulo de **Sistemas de Gestión Empresarial**, se ha implementado un panel de gestión (Backoffice) que simula la arquitectura de un ERP, permitiendo la futura gestión de clientes (profesores/centros) y roles.
 
+
+# Gestión de Usuarios y Autenticación (Sanctum)
+
+El sistema utiliza Laravel Sanctum para la autenticación SPA (Single Page Application) basada en cookies.
+
+## Creación de Usuarios (Profesores)
+Al no existir un formulario de registro público por motivos de seguridad del centro educativo, los usuarios con rol docente se crean internamente mediante la consola de Laravel:
+
+```bash
+# Acceder a la consola interactiva dentro del contenedor Docker
+sudo docker exec -it laravel_api php artisan tinker
+
+# Comando para instanciar un nuevo profesor
+App\Models\User::create([
+    'name' => 'Nombre del Profesor', 
+    'email' => 'correo@colegio.com', 
+    'password' => bcrypt('contraseña_segura')
+]);
+ ```
+
 ## Arquitectura de Seguridad
 Dado que el proyecto utiliza una arquitectura desacoplada (Frontend en Vue 3 y Backend en Laravel), se ha descartado el uso de sistemas de plantillas monolíticos (Blade). En su lugar, se ha implementado la capa de seguridad utilizando:
 
@@ -28,3 +48,21 @@ Para cumplir con los estándares de usabilidad web y accesibilidad, se han reali
 1. **Coherencia Visual:** Se han unificado los componentes de navegación ("Botones de Volver") y las tarjetas del Dashboard, eliminando fondos de alto impacto (negros/colores saturados) para evitar problemas de contraste y facilitar la lectura a usuarios con daltonismo.
 2. **Jerarquía Tipográfica:** Se ha aumentado el peso y tamaño de los encabezados (`h1`, `h2`) en las vistas de evaluación para guiar correctamente el flujo visual del usuario frente a los datos numéricos.
 3. **Limpieza de Navegación:** Se ha eliminado la ruta genérica de "Evaluación" del menú principal superior, ya que arquitectónicamente la evaluación depende estrictamente del contexto de un alumno seleccionado (navegación jerárquica).
+
+## Troubleshooting: Error 401 (Unauthorized) en Login
+Durante el despliegue con Docker, si el frontend (Vue) y el backend (Laravel) operan en puertos distintos, puede producirse un rechazo de cookies por políticas de CORS y dominios stateful.
+
+Solución aplicada:
+Se deben configurar estrictamente las variables de entorno en el archivo `.env` del backend para declarar al frontend como una aplicación de confianza:
+
+`SESSION_DOMAIN=` (Dejar vacío para evitar conflictos de resolución en localhost).
+
+`SANCTUM_STATEFUL_DOMAINS=localhost:5173,127.0.0.1:5173`
+
+`FRONTEND_URL=http://localhost:5173`
+
+Tras cualquier cambio en estas variables, es obligatorio purgar la caché de configuración:
+
+```Bash
+sudo docker exec -it laravel_api php artisan optimize:clear
+```
