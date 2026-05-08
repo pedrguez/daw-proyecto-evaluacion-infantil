@@ -51,11 +51,17 @@ class ControladorPrueba extends Controller
             return response()->json(['mensaje' => 'Alumno no encontrado'], 404);
         }
 
-        $alumno->nombre = $request->nombre;
-        $alumno->apellidos = $request->apellidos;
-        $alumno->fecha_nacimiento = $request->fecha_nacimiento;
-        $alumno->curso = $request->curso;
-        $alumno->observaciones = $request->observaciones;
+        // Se actualiza solo lo que se envía en la petición
+        if ($request->has('nombre')) $alumno->nombre = $request->nombre;
+        if ($request->has('apellidos')) $alumno->apellidos = $request->apellidos;
+        if ($request->has('fecha_nacimiento')) $alumno->fecha_nacimiento = $request->fecha_nacimiento;
+        if ($request->has('curso')) $alumno->curso = $request->curso;
+        if ($request->has('observaciones')) $alumno->observaciones = $request->observaciones;
+
+        // Campos de Gestión Familiar
+        if ($request->has('correo_familiar')) $alumno->correo_familiar = $request->correo_familiar;
+        if ($request->has('notas_tutoria')) $alumno->notas_tutoria = $request->notas_tutoria;
+
         $alumno->save();
 
         return response()->json(['mensaje' => 'Alumno actualizado correctamente']);

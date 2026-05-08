@@ -30,3 +30,22 @@ sudo docker exec -it laravel_api php artisan migrate:fresh
 
 # Creación manual de credenciales de acceso iniciales (Tinker)
 sudo docker exec -it laravel_api php artisan tinker
+```
+
+## Resolución de Problemas (Troubleshooting)
+
+### Conflicto de Permisos de Archivos entre Docker y el Host (Linux)
+
+
+**Problema:**
+Al ejecutar comandos de generación de código de Laravel (como `make:migration` o `make:controller`) a través del contenedor de Docker (`docker exec`), los nuevos archivos se crean con permisos de superusuario (`root`). Esto provoca que el editor de código (VS Code) en el entorno host (Linux) bloquee la edición o requiera contraseña de administrador para guardar los cambios.
+
+**Causa:**
+El contenedor de Docker opera internamente con privilegios de root por defecto. Al mapear el volumen hacia el sistema host, la propiedad de los archivos generados se transfiere como root, dejando al usuario local sin permisos de escritura directa.
+
+**Solución:**
+Para recuperar la propiedad de los archivos sin alterar el funcionamiento del contenedor, se ejecuta el siguiente comando en la raíz del proyecto para reasignar recursivamente la propiedad al usuario actual del sistema operativo:
+
+```bash
+sudo chown -R $USER:$USER .
+```

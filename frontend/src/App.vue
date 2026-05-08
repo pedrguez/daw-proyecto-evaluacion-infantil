@@ -17,7 +17,7 @@ const cerrarSesion = () => {
       <template v-if="auth.estaAutenticado">
           <RouterLink to="/dashboard">Dashboard</RouterLink>
           <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
-
+          <RouterLink to="/gestion-familiar" class="nav-link">Gestión Familiar</RouterLink>
           <a v-if="auth.rolUsuario === 'admin'" href="#" class="admin-link">⭐ Gestión Personal</a>
 
           <span class="bienvenida">Hola, {{ auth.nombreUsuario }} ({{ auth.rolUsuario }})</span>

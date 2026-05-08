@@ -5,6 +5,7 @@ import DashboardView from '../views/DashboardView.vue'
 import AlumnosView from '../views/AlumnosView.vue'
 import EvaluacionView from '../views/EvaluacionView.vue'
 import PerfilAlumnoView from '../views/PerfilAlumnoView.vue'
+import GestionFamiliarView from '../views/GestionFamiliarView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -13,11 +14,12 @@ const router = createRouter({
     { path: '/dashboard', name: 'dashboard', component: DashboardView, meta: { requiresAuth: true } },
     { path: '/alumnos', name: 'alumnos', component: AlumnosView, meta: { requiresAuth: true } },
     { path: '/evaluacion/:id?', name: 'evaluacion', component: EvaluacionView, meta: { requiresAuth: true } },
-    { path: '/alumno/:id', name: 'perfil-alumno', component: PerfilAlumnoView, meta: { requiresAuth: true } }
+    { path: '/alumno/:id', name: 'perfil-alumno', component: PerfilAlumnoView, meta: { requiresAuth: true } },
+    { path: '/gestion-familiar', name: 'gestion-familiar', component: GestionFamiliarView, meta: { requiresAuth: true } },
   ]
 })
 
-// --- GUARDIA DE NAVEGACIÓN (Protección de Rutas) ---
+// GUARDIA DE NAVEGACIÓN (Protección de Rutas)
 router.beforeEach((to, from, next) => {
   // Verificamos si existe el token de sesión en el almacenamiento local
   const estaAutenticado = localStorage.getItem('auth') === 'true'
