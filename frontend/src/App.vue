@@ -14,16 +14,15 @@ const cerrarSesion = () => {
 <template>
   <header>
     <nav>
-      <template v-if="!auth.estaAutenticado">
-        <RouterLink to="/">Login</RouterLink>
-      </template>
-
       <template v-if="auth.estaAutenticado">
-        <RouterLink to="/dashboard">Dashboard</RouterLink>
-        <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
-        <span class="bienvenida">Hola, {{ auth.nombreUsuario }}</span>
-        <button @click="cerrarSesion" class="btn-logout">Cerrar Sesión</button>
-      </template>
+          <RouterLink to="/dashboard">Dashboard</RouterLink>
+          <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
+
+          <a v-if="auth.rolUsuario === 'admin'" href="#" class="admin-link">⭐ Gestión Personal</a>
+
+          <span class="bienvenida">Hola, {{ auth.nombreUsuario }} ({{ auth.rolUsuario }})</span>
+          <button @click="cerrarSesion" class="btn-logout">Cerrar Sesión</button>
+        </template>
     </nav>
   </header>
   <RouterView />

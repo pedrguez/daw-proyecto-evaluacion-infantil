@@ -24,14 +24,12 @@ const iniciarSesion = async () => {
       // Ya estamos dentro. Ahora pedimos los datos de nuestro usuario
       const respuestaUser = await api.get('/api/user')
 
-      // ESTE ES EL CHIVATO: Nos mostrará en la consola del navegador qué responde Laravel
-      console.log("Respuesta de Laravel:", respuestaUser.data)
+      // Extraemos el nombre y el rol con cuidado
+      const nombreLogueado = respuestaUser.data.name || respuestaUser.data.usuario?.name || 'Profesor'
+      const rolLogueado = respuestaUser.data.rol || respuestaUser.data.usuario?.rol || 'profesor'
 
-      // Extraemos el nombre con cuidado (por si viene dentro de otro objeto)
-      const nombreProfesor = respuestaUser.data.name || respuestaUser.data.usuario?.name || 'Profesor'
-
-      // Guardamos en Pinia
-      auth.login(nombreProfesor)
+      // Guardamos ambos en Pinia
+      auth.login(nombreLogueado, rolLogueado)
 
       // Redirigimos a la lista
       router.push('/alumnos')
