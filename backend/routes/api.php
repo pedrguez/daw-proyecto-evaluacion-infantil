@@ -28,5 +28,8 @@ Route::get('/rubricas', [ControladorPrueba::class, 'obtenerRubricas']);
 Route::get('/evaluacion/{alumno_id}/{trimestre}', [ControladorPrueba::class, 'obtenerNotas']);
 // Ruta para obtener TODAS las notas de un alumno (para el boletín)
 Route::get('/alumnos/{id}/notas', [ControladorPrueba::class, 'obtenerTodasLasNotas']);
+// Rutas para el Diario de Aula
+Route::get('/diario', [App\Http\Controllers\DiarioAulaController::class, 'index']);
+Route::post('/diario', [App\Http\Controllers\DiarioAulaController::class, 'store']);
 
 require __DIR__.'/auth.php';
