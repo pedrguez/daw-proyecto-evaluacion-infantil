@@ -18,8 +18,8 @@ const cerrarSesion = () => {
           <RouterLink to="/dashboard">Dashboard</RouterLink>
           <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
           <RouterLink to="/gestion-familiar" class="nav-link">Gestión Familiar</RouterLink>
-          <a v-if="auth.rolUsuario === 'admin'" href="#" class="admin-link">⭐ Gestión Personal</a>
-
+          <RouterLink to="/diario-aula" class="nav-link">Diario de Aula</RouterLink>
+          <RouterLink v-if="auth.rolUsuario === 'admin'" to="/gestion-personal" class="nav-link">Gestión Personal</RouterLink>
           <span class="bienvenida">Hola, {{ auth.nombreUsuario }} ({{ auth.rolUsuario }})</span>
           <button @click="cerrarSesion" class="btn-logout">Cerrar Sesión</button>
         </template>

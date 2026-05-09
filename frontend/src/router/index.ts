@@ -7,6 +7,7 @@ import EvaluacionView from '../views/EvaluacionView.vue'
 import PerfilAlumnoView from '../views/PerfilAlumnoView.vue'
 import GestionFamiliarView from '../views/GestionFamiliarView.vue'
 import DiarioAulaView from '../views/DiarioAulaView.vue'
+import GestionPersonalView from '../views/GestionPersonalView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -18,6 +19,7 @@ const router = createRouter({
     { path: '/alumno/:id', name: 'perfil-alumno', component: PerfilAlumnoView, meta: { requiresAuth: true } },
     { path: '/gestion-familiar', name: 'gestion-familiar', component: GestionFamiliarView, meta: { requiresAuth: true } },
     { path: '/diario-aula', name: 'diario-aula', component: DiarioAulaView, meta: { requiresAuth: true } },
+    { path: '/gestion-personal', name: 'gestion-personal', component: GestionPersonalView, meta: { requiresAuth: true } },
   ]
 })
 

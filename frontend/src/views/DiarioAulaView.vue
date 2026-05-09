@@ -35,10 +35,10 @@
       </div>
 
       <div v-for="nota in notasAMostrar" :key="nota.id" class="col-md-10">
-        <div class="card border-start border-4 border-primary shadow-sm">
+        <div class="card border-info shadow-sm">
           <div class="card-body">
             <div class="mb-2">
-              <span class="badge bg-light text-primary fs-6">{{ formatearFecha(nota.fecha) }}</span>
+              <span class="badge border border-info text-dark fs-6">{{ formatearFecha(nota.fecha) }}</span>
             </div>
             <p class="card-text text-dark" style="white-space: pre-wrap;">{{ nota.contenido }}</p>
           </div>

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Alumno; // Importamos el modelo de Alumno
 use App\Models\Nota;
 use App\Models\Area;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 class ControladorPrueba extends Controller
 {
@@ -123,5 +125,34 @@ class ControladorPrueba extends Controller
     public function obtenerTodasLasNotas(int $alumno_id) {
         $notas = Nota::where('alumno_id', $alumno_id)->get();
         return response()->json($notas);
+    }
+
+    // Función para listar todo el personal (Protegida)
+    public function listarUsuarios(Request $request) {
+        // Si el usuario logueado no es admin, le denegamos el acceso
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['mensaje' => 'No autorizado'], 403);
+        }
+        return response()->json(User::all());
+    }
+
+    // Función para crear un nuevo profesor/admin (Protegida)
+    public function guardarUsuario(Request $request) {
+        if ($request->user()->role !== 'admin') {
+            return response()->json(['mensaje' => 'No autorizado'], 403);
+        }
+
+        $usuario = new User();
+        $usuario->name = $request->name;
+        $usuario->email = $request->email;
+        $usuario->password = Hash::make($request->password);
+
+        if ($request->has('role')) {
+            $usuario->role = $request->role;
+        }
+
+        $usuario->save();
+
+        return response()->json(['mensaje' => 'Profesor guardado correctamente']);
     }
 }
