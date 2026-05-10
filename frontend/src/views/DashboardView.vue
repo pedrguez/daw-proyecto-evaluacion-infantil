@@ -39,9 +39,9 @@
 import { ref, onMounted } from 'vue'
 import api from '../axios'
 
-const totalAlumnos = ref(0)
+const totalAlumnos = ref(0) // Variable reactiva para almacenar el número total de alumnos registrados
 
-const cargarEstadisticas = async () => {
+const cargarEstadisticas = async () => { // Función para cargar el número total de alumnos registrados
   try {
     const respuesta = await api.get('/api/alumnos')
     totalAlumnos.value = respuesta.data.length

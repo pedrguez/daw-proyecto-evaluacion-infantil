@@ -40,7 +40,7 @@ interface NotaGuardada {
   valor: number;
 }
 
-// 1. ESCALA
+// Escala de colores y títulos para las medias
 const escala = [
   { valor: 1, titulo: 'Poco Adecuado', color: '#fee2e2', borde: '#ef4444', textoColor: '#b91c1c' },
   { valor: 2, titulo: 'Adecuado', color: '#fef3c7', borde: '#f59e0b', textoColor: '#b45309' },
@@ -48,12 +48,12 @@ const escala = [
   { valor: 4, titulo: 'Excelente', color: '#e0e7ff', borde: '#6366f1', textoColor: '#4338ca' }
 ]
 
-// 2. VARIABLES
+// Variables reactivas
 const areas = ref<Area[]>([])
 const tabActiva = ref<number | null>(null)
 const trimestreActivo = ref(1)
 
-// 3. CARGAR RÚBRICA
+// Cargar rúbrica oficial desde la base de datos
 const cargarRubrica = async () => {
   try {
     const res = await api.get('/api/rubricas')
@@ -76,7 +76,7 @@ const cargarRubrica = async () => {
   }
 }
 
-// 3.5 CARGAR NOTAS
+// Cargar notas guardadas para el alumno y trimestre activo
 const cargarNotas = async () => {
   try {
     const res = await api.get(`/api/evaluacion/${alumnoId}/${trimestreActivo.value}`)
@@ -109,7 +109,7 @@ watch(trimestreActivo, () => {
   cargarNotas()
 })
 
-// 4. GUARDAR
+// Guardar evaluación final
 const guardarEvaluacionFinal = async () => {
   const notasParaGuardar: { criterio_id: number, valor: number }[] = []
 
@@ -144,11 +144,11 @@ const guardarEvaluacionFinal = async () => {
     alert('❌ Hubo un error al guardar las notas.')
   }
 }
-
+// Cálculos computados
 const areaActual = computed(() => {
   return areas.value.find(a => a.id === tabActiva.value)
 })
-
+// Media del área activa
 const mediaAreaActiva = computed(() => {
   let total = 0, cantidad = 0
   if (!areaActual.value) return 0
@@ -160,7 +160,7 @@ const mediaAreaActiva = computed(() => {
   })
   return cantidad === 0 ? 0 : (total / cantidad)
 })
-
+// Información para mostrar según la media del área activa
 const infoMediaArea = computed(() => {
   const media = mediaAreaActiva.value
   if (media === 0) return { titulo: 'Sin evaluar', color: '#f3f4f6', borde: '#d1d5db', textoColor: '#6b7280' }
@@ -170,7 +170,7 @@ const infoMediaArea = computed(() => {
   if (media < 3.5) return escala[2]!
   return escala[3]!
 })
-
+// Media global de todos los criterios evaluados
 const mediaGlobal = computed(() => {
   let total = 0, cantidad = 0
   areas.value.forEach((area: Area) => {
@@ -182,7 +182,7 @@ const mediaGlobal = computed(() => {
   })
   return cantidad === 0 ? '0.00' : (total / cantidad).toFixed(2)
 })
-
+// Función para puntuar un criterio
 const puntuar = (criterio: Criterio, valor: number) => { criterio.nota = valor }
 
 onMounted(async () => {
@@ -192,14 +192,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="container mt-4 mb-5">
+  <div class="container mt-4 mb-5"> // Encabezado con título, media del área activa y selector de trimestre
 
-    <div class="mb-4">
+    <div class="mb-4">// Botón para volver al perfil del alumno
       <button @click="router.push(`/alumno/${alumnoId}`)" class="btn btn-outline-secondary btn-sm mb-3 fw-bold">
         &larr; Volver al Perfil del Alumno
       </button>
 
-      <div class="d-flex flex-wrap justify-content-between align-items-end border-bottom pb-3 mb-4 gap-3">
+      <div class="d-flex flex-wrap justify-content-between align-items-end border-bottom pb-3 mb-4 gap-3"> // Título y media del área activa
         <div>
           <h2 class="fw-bolder mb-2 display-6 text-dark">Evaluación Trimestral</h2>
           <span class="badge bg-primary bg-opacity-10 text-primary border border-primary rounded-pill px-3 py-2 fs-6">
@@ -207,7 +207,7 @@ onMounted(async () => {
           </span>
         </div>
 
-        <div class="d-flex align-items-center gap-3 bg-light p-3 border rounded-3 shadow-sm">
+        <div class="d-flex align-items-center gap-3 bg-light p-3 border rounded-3 shadow-sm"> // Media del área activa
           <div class="fs-5 text-secondary">
             Media del Área: <strong class="text-primary fs-4">{{ mediaAreaActiva > 0 ? mediaAreaActiva.toFixed(2) : '0.00' }}</strong> / 4.00
           </div>
@@ -219,12 +219,12 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div v-if="areas.length === 0" class="alert alert-info text-center py-5 shadow-sm fw-bold">
+    <div v-if="areas.length === 0" class="alert alert-info text-center py-5 shadow-sm fw-bold"> // Cargando rúbrica oficial...
       ⏳ Descargando rúbrica oficial desde la base de datos...
     </div>
 
     <div v-else>
-      <ul class="nav nav-tabs mb-4">
+      <ul class="nav nav-tabs mb-4"> // Pestañas para cada área
         <li class="nav-item" v-for="area in areas" :key="area.id">
           <button class="nav-link fw-bold text-secondary"
                   :class="{ 'active text-primary bg-light border-bottom-0': tabActiva === area.id }"
@@ -234,7 +234,7 @@ onMounted(async () => {
         </li>
       </ul>
 
-      <div v-if="areaActual" class="mb-5 bg-white p-4 rounded-3 border shadow-sm">
+      <div v-if="areaActual" class="mb-5 bg-white p-4 rounded-3 border shadow-sm"> // Contenido del área activa
         <h3 class="fw-bold text-dark border-bottom border-primary pb-2 mb-4 d-inline-block">
           {{ areaActual.nombre }}
         </h3>
@@ -248,7 +248,7 @@ onMounted(async () => {
             <p class="text-secondary fs-6 ms-4 mb-0">{{ competencia.texto }}</p>
           </div>
 
-          <div class="ps-0 ps-md-4">
+          <div class="ps-0 ps-md-4"> // Criterios de evaluación de la competencia
             <div v-for="criterio in competencia.criterios" :key="criterio.id" class="border pt-4 pb-4 px-4 mt-4 rounded-3 bg-light">
               <p class="mb-3 text-secondary fs-6">
                 <strong class="text-dark">Criterio {{ criterio.identificador }}:</strong> {{ criterio.texto.replace(/^[0-9.]+\s*/, '') }}
@@ -279,12 +279,12 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="mt-5 pt-4 border-top d-flex flex-column align-items-end gap-3">
+    <div class="mt-5 pt-4 border-top d-flex flex-column align-items-end gap-3"> // Sección de nota global y selector de trimestre
       <div v-if="mediaGlobal !== '0.00'" class="bg-dark text-white px-4 py-2 rounded-3 fs-5 shadow-sm">
         Nota Trimestral Global: <strong class="text-success fs-4">{{ mediaGlobal }}</strong> / 4.00
       </div>
 
-      <div class="d-flex flex-wrap gap-3 align-items-center">
+      <div class="d-flex flex-wrap gap-3 align-items-center"> // Selector de trimestre y botón para guardar evaluación
         <div class="d-flex align-items-center gap-2 bg-light p-2 px-3 rounded border shadow-sm">
           <label class="fw-bold text-secondary mb-0">Evaluando:</label>
           <select v-model="trimestreActivo" class="form-select form-select-sm w-auto fw-bold cursor-pointer">

@@ -4,7 +4,7 @@
       <h2>Gestión Familiar</h2>
     </div>
 
-    <div class="card shadow-sm border-0">
+    <div class="card shadow-sm border-0"> // Tabla de alumnos y datos familiares
       <div class="card-body p-0">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div v-if="mostrarModal" class="modal d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);">
+    <div v-if="mostrarModal" class="modal d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);"> // Modal para editar datos familiares
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header bg-light">
@@ -86,7 +86,7 @@ const alumnoEditando = ref<Alumno | null>(null)
 const formCorreo = ref('')
 const formNotas = ref('')
 
-const cargarAlumnos = async () => {
+const cargarAlumnos = async () => { // Carga la lista de alumnos desde la API
   try {
     const respuesta = await api.get('/api/alumnos')
     alumnos.value = respuesta.data
@@ -95,19 +95,19 @@ const cargarAlumnos = async () => {
   }
 }
 
-const abrirModal = (alumno: Alumno) => {
+const abrirModal = (alumno: Alumno) => { // Abre el modal y carga los datos del alumno seleccionado
   alumnoEditando.value = alumno
   formCorreo.value = alumno.correo_familiar || ''
   formNotas.value = alumno.notas_tutoria || ''
   mostrarModal.value = true
 }
 
-const cerrarModal = () => {
+const cerrarModal = () => { // Cierra el modal y limpia los datos del alumno editando
   mostrarModal.value = false
   alumnoEditando.value = null
 }
 
-const guardarDatos = async () => {
+const guardarDatos = async () => { // Guarda los datos editados del alumno
   if (!alumnoEditando.value) return;
   try {
     await api.put(`/api/alumnos/${alumnoEditando.value.id}`, {

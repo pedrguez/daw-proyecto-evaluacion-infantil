@@ -22,12 +22,12 @@ export const useAuthStore = defineStore('auth', () => {
   // NUEVA Función para cerrar sesión de verdad (Backend + Frontend)
   async function logout() {
     try {
-      // 1. Le decimos a Laravel que destruya la sesión real de Sanctum
+      // 1 Le decimos a Laravel que destruya la sesión real de Sanctum
       await api.post('/logout')
     } catch (error) {
       console.error("Error desconectando del backend", error)
     } finally {
-      // 2. Limpiamos el navegador (Lo que ya tenías)
+      // 2 Limpiamos el navegador (Lo que ya tenías)
       estaAutenticado.value = false
       nombreUsuario.value = ''
       rolUsuario.value = ''
@@ -36,10 +36,10 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.removeItem('nombre_usuario')
       localStorage.removeItem('rol_usuario')
 
-      // 3. Forzamos una recarga completa para volver al Login limpio
+      // 3 Forzamos una recarga completa para volver al Login limpio
       window.location.href = '/'
     }
   }
 
-  return { estaAutenticado, nombreUsuario, rolUsuario, login, logout }
+  return { estaAutenticado, nombreUsuario, rolUsuario, login, logout } // Exportamos el estado y las funciones para usarlas en los componentes
 })

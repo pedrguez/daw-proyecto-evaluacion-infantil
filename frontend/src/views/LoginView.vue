@@ -9,7 +9,7 @@ const router = useRouter()
 const email = ref('')
 const password = ref('')
 const mensajeError = ref('')
-
+// Función para iniciar sesión
 const iniciarSesion = async () => {
   mensajeError.value = ''
   try {
@@ -22,7 +22,7 @@ const iniciarSesion = async () => {
         password: password.value
       })
 
-      // Ya estamos dentro. Ahora pedimos los datos de nuestro usuario
+      // Pedimos los datos de nuestro usuario
       const respuestaUser = await api.get('/api/user')
 
       // Extraemos el nombre y el rol con cuidado
@@ -32,7 +32,7 @@ const iniciarSesion = async () => {
       // Guardamos ambos en Pinia
       auth.login(nombreLogueado, rolLogueado)
 
-      // ¡AQUÍ ESTABA EL CAMBIO! Ahora redirige al Panel de Control
+      // Redirige al Panel de Control
       router.push('/panel-de-control')
   } catch (error) {
     mensajeError.value = 'Credenciales incorrectas o error en el servidor.'
@@ -42,7 +42,7 @@ const iniciarSesion = async () => {
 </script>
 
 <template>
-  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh; background-color: #f3f4f6;">
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh; background-color: #f3f4f6;"> // Fondo gris claro y centrado verticalmente
 
     <div class="card shadow border-0 p-4 w-100" style="max-width: 400px; border-radius: 8px;">
 
@@ -53,12 +53,12 @@ const iniciarSesion = async () => {
 
       <form @submit.prevent="iniciarSesion">
 
-        <div class="mb-3 text-start">
+        <div class="mb-3 text-start"> // Campo de correo electrónico
           <label for="email" class="form-label fw-bold text-secondary mb-1" style="font-size: 0.9em;">Correo Electrónico</label>
           <input type="email" id="email" v-model="email" class="form-control" required placeholder="profesor@colegio.com" />
         </div>
 
-        <div class="mb-4 text-start">
+        <div class="mb-4 text-start"> // Campo de contraseña
           <label for="password" class="form-label fw-bold text-secondary mb-1" style="font-size: 0.9em;">Contraseña</label>
           <input type="password" id="password" v-model="password" class="form-control" required placeholder="********" />
         </div>
@@ -74,9 +74,9 @@ const iniciarSesion = async () => {
     </div>
   </div>
 </template>
-
+// Estilos específicos para el LoginView
 <style scoped>
-/* Solo dejamos un pequeño ajuste de CSS para mantener tu color azul exacto en el botón */
+
 .login-btn {
   background-color: #4f46e5;
   border-color: #4f46e5;

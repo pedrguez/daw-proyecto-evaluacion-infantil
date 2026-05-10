@@ -8,7 +8,7 @@ import GestionFamiliarView from '../views/GestionFamiliarView.vue'
 import DiarioAulaView from '../views/DiarioAulaView.vue'
 import GestionPersonalView from '../views/GestionPersonalView.vue'
 
-const router = createRouter({
+const router = createRouter({ // Configuración del router usando el historial de navegación basado en la API History de HTML5
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: 'login', component: LoginView },
@@ -35,7 +35,7 @@ router.beforeEach((to, from, next) => {
   }
   // Si el usuario ya está autenticado e intenta acceder de nuevo al Login -> Redirigir al Panel de Control
   else if (to.path === '/' && estaAutenticado) {
-    next('/panel-de-control') // ¡Aquí estaba el otro cambio!
+    next('/panel-de-control') // Redirigir al Panel de Control si el usuario ya está autenticado
   }
   // En cualquier otro caso, permitir la navegación
   else {

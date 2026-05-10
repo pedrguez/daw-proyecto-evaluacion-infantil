@@ -1,5 +1,5 @@
 import axios from 'axios'
-
+// Configuramos una instancia de Axios con la URL base de nuestro backend y las opciones necesarias para manejar cookies y tokens CSRF
 const axiosInstance = axios.create({
   baseURL: 'http://localhost:8000',
   withCredentials: true, // Esto es importante para enviar cookies (como la de sesión) en cada solicitud

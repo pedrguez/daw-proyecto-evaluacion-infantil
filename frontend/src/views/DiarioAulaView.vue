@@ -4,7 +4,7 @@
       <h2>Diario de Aula</h2>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4 bg-light">
+    <div class="card shadow-sm border-0 mb-4 bg-light"> // Formulario para nueva entrada
       <div class="card-body p-4">
         <h5 class="card-title text-primary small fw-bold text-uppercase mb-3">
           Nueva Entrada
@@ -14,7 +14,7 @@
             <input v-model="nuevaNota.fecha" type="date" class="form-control shadow-sm" />
           </div>
           <div class="col-md-12">
-            <textarea v-model="nuevaNota.contenido" class="form-control shadow-sm" placeholder="¿Qué se ha hecho hoy en clase? Anota observaciones, hitos o incidencias..." rows="3"></textarea>
+            <textarea v-model="nuevaNota.contenido" class="form-control shadow-sm" placeholder="Anota observaciones, hitos o incidencias..." rows="3"></textarea>
           </div>
         </div>
         <div class="d-flex justify-content-end mt-3">
@@ -23,7 +23,7 @@
       </div>
     </div>
 
-    <div class="card shadow-sm border-0 mb-4">
+    <div class="card shadow-sm border-0 mb-4"> // Filtro de búsqueda
       <div class="card-body d-flex flex-wrap align-items-center gap-3 py-3">
         <span class="fw-bold text-secondary">🔍 Buscar por fecha:</span>
         <input v-model="filtroFecha" type="date" class="form-control w-auto shadow-sm" />
@@ -31,12 +31,12 @@
       </div>
     </div>
 
-    <div class="row flex-column align-items-center g-3">
+    <div class="row flex-column align-items-center g-3"> // Listado de notas
       <div v-if="notasAMostrar.length === 0" class="text-center text-muted my-5">
         No hay registros para este día o el diario está vacío.
       </div>
 
-      <div v-for="nota in notasAMostrar" :key="nota.id" class="col-md-10">
+      <div v-for="nota in notasAMostrar" :key="nota.id" class="col-md-10"> // Tarjeta de cada nota
         <div class="card shadow-sm border-0 border-start border-4 border-info">
           <div class="card-body p-4">
             <div class="mb-3">
@@ -50,7 +50,7 @@
       </div>
     </div>
 
-    <div v-if="!filtroFecha && notas.length > itemsPorPagina" class="d-flex justify-content-center mt-5 mb-5">
+    <div v-if="!filtroFecha && notas.length > itemsPorPagina" class="d-flex justify-content-center mt-5 mb-5"> // Paginación
       <nav>
         <ul class="pagination shadow-sm">
           <li class="page-item" :class="{ disabled: paginaActual === 1 }">
@@ -72,14 +72,14 @@
 import { ref, computed, onMounted } from 'vue'
 import api from '../axios'
 
-// 1. Le decimos a TypeScript qué forma tiene la nota
+// 1 Le decimos a TypeScript qué forma tiene la nota
 interface NotaDiario {
   id: number;
   fecha: string;
   contenido: string;
 }
 
-// 2. Se lo aplicamos a la variable
+// 2 Se lo aplicamos a la variable
 const notas = ref<NotaDiario[]>([])
 const filtroFecha = ref('')
 const paginaActual = ref(1)
@@ -132,6 +132,6 @@ onMounted(cargarDiario)
 </script>
 
 <style scoped>
-/* Todo manejado nativamente por las clases de Bootstrap */
+
 .page-link { cursor: pointer; }
 </style>

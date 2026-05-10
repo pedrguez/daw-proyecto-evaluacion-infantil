@@ -37,17 +37,17 @@ interface Area {
   nombre: string;
   competencias: Competencia[];
 }
-
+// Variables para el perfil del alumno
 const route = useRoute()
 const alumnoId = route.params.id
 const alumno = ref<Alumno | null>(null)
 const modoEdicion = ref(false)
 
-// VARIABLES PARA EL BOLETÍN
+// Variables para el boletín de notas
 const rubricaCompleta = ref<Area[]>([])
 const notasAlumno = ref<NotaGuardada[]>([])
 
-// 1. Cargar datos básicos del alumno
+// Cargar datos básicos del alumno
 const cargarAlumno = async () => {
   try {
     const res = await api.get(`/api/alumnos/${alumnoId}`)
@@ -57,7 +57,7 @@ const cargarAlumno = async () => {
   }
 }
 
-// 2. Cargar datos para el Boletín (Rúbricas + Notas)
+// Cargar datos para el Boletín (Rúbricas + Notas)
 const cargarBoletin = async () => {
   try {
     const resRubrica = await api.get('/api/rubricas')
@@ -70,7 +70,7 @@ const cargarBoletin = async () => {
   }
 }
 
-// 3. Función mágica: Busca qué nota sacó en un criterio y trimestre exacto
+// Busca qué nota sacó en un criterio y trimestre exacto
 const obtenerNota = (criterioId: number, trimestre: number) => {
   const nota = notasAlumno.value.find(n => n.criterio_id === criterioId && n.trimestre === trimestre)
   return nota ? nota.valor : '-'
@@ -85,7 +85,7 @@ const obtenerTextoNota = (valor: number | string) => {
   return '-'
 }
 
-// 4. Guardar cambios del perfil
+// Guardar cambios del perfil
 const guardarCambios = async () => {
   try {
     await api.put(`/api/alumnos/${alumnoId}`, alumno.value)
@@ -103,7 +103,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="alumno" class="container mt-4 mb-5">
+  <div v-if="alumno" class="container mt-4 mb-5"> // Contenedor principal con márgenes verticales
 
     <header class="mb-4">
       <button @click="$router.push('/alumnos')" class="btn btn-outline-secondary btn-sm mb-3 fw-bold">
@@ -208,7 +208,7 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* Sin CSS innecesario, solo los colores exactos para las notas */
+
 .nota-1 { background-color: #fee2e2 !important; color: #b91c1c !important; }
 .nota-2 { background-color: #fef3c7 !important; color: #b45309 !important; }
 .nota-3 { background-color: #d1fae5 !important; color: #047857 !important; }

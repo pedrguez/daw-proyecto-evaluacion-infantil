@@ -1,4 +1,4 @@
-export const criteriosEvaluacion = [
+export const criteriosEvaluacion = [ // Este archivo contiene los criterios de evaluación que se mostrarán en la aplicación.
   {
     id: "1.1",
     titulo: "Criterio 1.1: Cualidades y Atributos",

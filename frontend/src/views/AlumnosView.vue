@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import api from '../axios'
+import { ref, onMounted } from 'vue' // Importamos las funciones necesarias de Vue para manejar el estado reactivo y el ciclo de vida del componente
+import api from '../axios' // Importamos la instancia de Axios configurada para hacer las peticiones al backend
 
-type Alumno = {
+type Alumno = { //
   id: number
   nombre: string
   apellidos: string
@@ -10,7 +10,7 @@ type Alumno = {
   curso: string
   observaciones: string
 }
-
+// Estado reactivo para controlar la visibilidad del formulario de nuevo alumno
 const mostrarFormulario = ref(false)
 const alumnos = ref<Alumno[]>([])
 const nuevoAlumno = ref({
@@ -21,7 +21,7 @@ const nuevoAlumno = ref({
   observaciones: ''
 })
 
-
+// Lógica para cargar los alumnos desde el backend al montar el componente
 const obtenerAlumnos = async () => {
   try {
     const res = await api.get('/api/alumnos')
@@ -30,11 +30,11 @@ const obtenerAlumnos = async () => {
     console.error("Error al cargar los alumnos", error)
   }
 }
-
+// Lógica para agregar un nuevo alumno al backend
 const agregarAlumno = async () => {
   try {
     // Axios usa api.post, le pasas la ruta y directamente tu variable.
-    // Él hace el JSON.stringify y pone los headers por ti.
+    // Él hace el JSON.stringify y pone los headers
     await api.post('/api/alumnos', nuevoAlumno.value)
 
     nuevoAlumno.value = { nombre: '', apellidos: '', fecha_nacimiento: '', curso: '', observaciones: '' }
@@ -45,7 +45,7 @@ const agregarAlumno = async () => {
   }
 }
 
-// LÓGICA PARA ELIMINAR UN ALUMNO
+// Lógica para eliminar un alumno, con confirmación previa
 const eliminarAlumno = async (alumno: any) => {
   if (confirm(`¿Estás seguro de que deseas eliminar a ${alumno.nombre} ${alumno.apellidos}? Esta acción borrará también todas sus calificaciones.`)) {
     try {
@@ -58,13 +58,13 @@ const eliminarAlumno = async (alumno: any) => {
   }
 }
 
-onMounted(obtenerAlumnos)
+onMounted(obtenerAlumnos) // Cargamos los alumnos al montar el componente para mostrar la lista actualizada
 </script>
 
 <template>
   <div class="container mt-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4"> // Encabezado con título y botón para mostrar el formulario
       <h2>Lista de Alumnos</h2>
       <button v-if="!mostrarFormulario" @click="mostrarFormulario = true" class="btn btn-success">
         + Añadir Nuevo Alumno
@@ -104,7 +104,7 @@ onMounted(obtenerAlumnos)
         </form>
       </div>
     </div>
-
+          // Tabla para mostrar la lista de alumnos con acciones para ver ficha y eliminar
     <div class="card shadow-sm">
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -128,9 +128,9 @@ onMounted(obtenerAlumnos)
                 </td>
                 <td>
                       <div class="d-flex gap-2">
-                        <button @click="$router.push(`/alumno/${alumno.id}`)" class="btn btn-primary btn-sm">Ver Ficha</button>
+                        <button @click="$router.push(`/alumno/${alumno.id}`)" class="btn btn-primary btn-sm">Ver Ficha</button> // Redirige a la vista de ficha del alumno
 
-                        <button @click="eliminarAlumno(alumno)" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                        <button @click="eliminarAlumno(alumno)" class="btn btn-outline-danger btn-sm">Eliminar</button> // Llama a la función para eliminar el alumno con confirmación previa
                       </div>
                     </td>
               </tr>
@@ -144,5 +144,5 @@ onMounted(obtenerAlumnos)
 </template>
 
 <style scoped>
-/* Sin CSS manual, todo limpio con Bootstrap */
+
 </style>

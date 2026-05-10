@@ -14,7 +14,7 @@ class ControladorPrueba extends Controller
     // Mantiene la prueba de conexión original por si la necesitas
     public function Saludar() {
         return response()->json([
-            'mensaje' => '¡Hola! Soy tu ControladorPrueba de Laravel. Nuestra API funciona perfecto. 🚀'
+            'mensaje' => ' ControladorPrueba de Laravel. La api funciona correctamente.'
         ]);
     }
 
@@ -76,7 +76,7 @@ class ControladorPrueba extends Controller
             return response()->json(['mensaje' => 'Alumno no encontrado'], 404);
         }
 
-        $alumno->delete(); // Magia de Laravel: borra el registro de la base de datos
+        $alumno->delete(); // Borra el registro de la base de datos
         return response()->json(['mensaje' => 'Alumno eliminado correctamente']);
     }
 
@@ -84,7 +84,7 @@ class ControladorPrueba extends Controller
     public function guardarEvaluacion(Request $request) {
         $alumno_id = $request->input('alumno_id');
         $trimestre = $request->input('trimestre');
-        $notas = $request->input('notas'); // Esto será un Array con todas las celdas que pulsaste
+        $notas = $request->input('notas'); // Esto será un Array con todas las celdas que pulsó el profesor en Vue
 
         // Recorremos todas las notas que ha enviado Vue
         foreach ($notas as $nota) {
@@ -107,7 +107,7 @@ class ControladorPrueba extends Controller
 
     // Función para enviar toda la rúbrica al Frontend
     public function obtenerRubricas() {
-        // Carga ansiosa: Trae las áreas y, de paso, sus competencias y criterios
+        // Trae las áreas y, de paso, sus competencias y criterios
         $areas = Area::with('competencias.criterios')->get();
         return response()->json($areas);
     }
@@ -169,7 +169,7 @@ class ControladorPrueba extends Controller
         // Actualizamos los datos básicos
         $usuario->name = $request->name;
         $usuario->email = $request->email;
-        $usuario->rol = $request->role; // <-- ¡AQUÍ ESTABA EL ERROR! "rol" sin 'e'
+        $usuario->rol = $request->role ?? $request->rol; // si el frontend envía "role" en lugar de "rol", lo aceptamos también
 
         // Si desde Vue enviamos una contraseña nueva, la encriptamos y la guardamos
         if ($request->filled('password')) {

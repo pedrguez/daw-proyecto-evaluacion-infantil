@@ -64,8 +64,7 @@ const cerrarSesion = async () => {
 </template>
 
 <style scoped>
-/* ¡Mira qué limpio! Bootstrap se encarga de casi todo el diseño. */
-/* Solo dejamos esto para que al pasar el ratón por los enlaces se note un poco */
+
 .nav-link {
   transition: color 0.2s ease-in-out;
 }
