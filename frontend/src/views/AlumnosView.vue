@@ -45,6 +45,19 @@ const agregarAlumno = async () => {
   }
 }
 
+// LÓGICA PARA ELIMINAR UN ALUMNO
+const eliminarAlumno = async (alumno: any) => {
+  if (confirm(`¿Estás seguro de que deseas eliminar a ${alumno.nombre} ${alumno.apellidos}? Esta acción borrará también todas sus calificaciones.`)) {
+    try {
+      await api.delete(`/api/alumnos/${alumno.id}`)
+      await obtenerAlumnos() // Volvemos a cargar la lista para que desaparezca
+    } catch (error) {
+      console.error("Error al eliminar el alumno:", error)
+      alert("No se ha podido eliminar el registro. Comprueba el backend.")
+    }
+  }
+}
+
 onMounted(obtenerAlumnos)
 </script>
 
@@ -114,10 +127,12 @@ onMounted(obtenerAlumnos)
                   <span class="text-muted fst-italic">{{ alumno.observaciones || '---' }}</span>
                 </td>
                 <td>
-                  <router-link :to="'/alumno/' + alumno.id" class="btn btn-primary btn-sm">
-                    Ver Ficha
-                  </router-link>
-                </td>
+                      <div class="d-flex gap-2">
+                        <button @click="$router.push(`/alumno/${alumno.id}`)" class="btn btn-primary btn-sm">Ver Ficha</button>
+
+                        <button @click="eliminarAlumno(alumno)" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                      </div>
+                    </td>
               </tr>
             </tbody>
           </table>

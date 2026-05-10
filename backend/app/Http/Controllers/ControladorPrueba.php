@@ -169,7 +169,7 @@ class ControladorPrueba extends Controller
         // Actualizamos los datos básicos
         $usuario->name = $request->name;
         $usuario->email = $request->email;
-        $usuario->role = $request->role;
+        $usuario->rol = $request->role; // <-- ¡AQUÍ ESTABA EL ERROR! "rol" sin 'e'
 
         // Si desde Vue enviamos una contraseña nueva, la encriptamos y la guardamos
         if ($request->filled('password')) {
