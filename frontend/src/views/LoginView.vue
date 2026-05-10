@@ -26,7 +26,7 @@ const iniciarSesion = async () => {
 
       // Extraemos el nombre y el rol con cuidado
       const nombreLogueado = respuestaUser.data.name || respuestaUser.data.usuario?.name || 'Profesor'
-      const rolLogueado = respuestaUser.data.rol || respuestaUser.data.usuario?.rol || 'profesor'
+      const rolLogueado = respuestaUser.data.rol || respuestaUser.data.role || respuestaUser.data.usuario?.rol || respuestaUser.data.usuario?.role || 'profesor'
 
       // Guardamos ambos en Pinia
       auth.login(nombreLogueado, rolLogueado)

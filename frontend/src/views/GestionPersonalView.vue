@@ -23,7 +23,7 @@
               <input v-model="nuevoProfesor.password" type="password" class="form-control" placeholder="Contraseña" required />
             </div>
             <div class="col-md-3">
-              <select v-model="nuevoProfesor.role" class="form-select" required>
+              <select v-model="nuevoProfesor.rol" class="form-select" required>
                 <option value="" disabled>Selecciona un rol</option>
                 <option value="profesor">Profesor</option>
                 <option value="admin">Director (Admin)</option>
@@ -56,8 +56,8 @@
               <td>{{ profesor.name }}</td>
               <td>{{ profesor.email }}</td>
               <td>
-                <span class="badge" :class="profesor.role === 'admin' ? 'bg-danger' : 'bg-info text-dark'">
-                  {{ profesor.role === 'admin' ? 'Director' : 'Profesor' }}
+                <span class="badge" :class="obtenerRolProfesor(profesor) === 'admin' ? 'bg-danger' : 'bg-info text-dark'">
+                  {{ obtenerRolProfesor(profesor) === 'admin' ? 'Director' : 'Profesor' }}
                 </span>
               </td>
               <td>
@@ -80,7 +80,8 @@ interface Profesor {
   id: number;
   name: string;
   email: string;
-  role: string;
+  role?: string;
+  rol?: string;
 }
 
 const mostrarFormulario = ref(false)
@@ -89,8 +90,10 @@ const nuevoProfesor = ref({
   name: '',
   email: '',
   password: '',
-  role: ''
+  rol: ''
 })
+
+const obtenerRolProfesor = (profesor: Profesor) => profesor.role ?? profesor.rol ?? 'profesor'
 
 const obtenerProfesores = async () => {
   try {
@@ -106,7 +109,7 @@ const agregarProfesor = async () => {
   try {
     await api.post('/api/users', nuevoProfesor.value)
     // Limpiamos y recargamos
-    nuevoProfesor.value = { name: '', email: '', password: '', role: '' }
+    nuevoProfesor.value = { name: '', email: '', password: '', rol: '' }
     obtenerProfesores()
     mostrarFormulario.value = false
   } catch (error) {

@@ -130,7 +130,7 @@ class ControladorPrueba extends Controller
     // Función para listar todo el personal (Protegida)
     public function listarUsuarios(Request $request) {
         // Si el usuario logueado no es admin, le denegamos el acceso
-        if ($request->user()->role !== 'admin') {
+        if ($request->user()->rol !== 'admin') {
             return response()->json(['mensaje' => 'No autorizado'], 403);
         }
         return response()->json(User::all());
@@ -138,7 +138,7 @@ class ControladorPrueba extends Controller
 
     // Función para crear un nuevo profesor/admin (Protegida)
     public function guardarUsuario(Request $request) {
-        if ($request->user()->role !== 'admin') {
+        if ($request->user()->rol !== 'admin') {
             return response()->json(['mensaje' => 'No autorizado'], 403);
         }
 
@@ -147,8 +147,10 @@ class ControladorPrueba extends Controller
         $usuario->email = $request->email;
         $usuario->password = Hash::make($request->password);
 
-        if ($request->has('role')) {
-            $usuario->role = $request->role;
+        if ($request->has('rol')) {
+            $usuario->rol = $request->rol;
+        } elseif ($request->has('role')) {
+            $usuario->rol = $request->role;
         }
 
         $usuario->save();
