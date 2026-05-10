@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import api from '../axios'
 
 type Alumno = {
   id: number
@@ -20,10 +21,11 @@ const nuevoAlumno = ref({
   observaciones: ''
 })
 
+
 const obtenerAlumnos = async () => {
   try {
-    const res = await fetch('http://localhost:8000/api/alumnos')
-    alumnos.value = await res.json()
+    const res = await api.get('/api/alumnos')
+    alumnos.value = res.data // Axios ya te da el JSON procesado aquí
   } catch (error) {
     console.error("Error al cargar los alumnos", error)
   }
@@ -31,11 +33,10 @@ const obtenerAlumnos = async () => {
 
 const agregarAlumno = async () => {
   try {
-    await fetch('http://localhost:8000/api/alumnos', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(nuevoAlumno.value)
-    })
+    // Axios usa api.post, le pasas la ruta y directamente tu variable.
+    // Él hace el JSON.stringify y pone los headers por ti.
+    await api.post('/api/alumnos', nuevoAlumno.value)
+
     nuevoAlumno.value = { nombre: '', apellidos: '', fecha_nacimiento: '', curso: '', observaciones: '' }
     obtenerAlumnos()
     mostrarFormulario.value = false
@@ -93,32 +94,34 @@ onMounted(obtenerAlumnos)
 
     <div class="card shadow-sm">
       <div class="card-body p-0">
-        <table class="table table-hover align-middle mb-0">
-          <thead class="table-light">
-            <tr>
-              <th>ID</th>
-              <th>Nombre Completo</th>
-              <th>Curso</th>
-              <th>Observaciones</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="alumno in alumnos" :key="alumno.id">
-              <td>{{ alumno.id }}</td>
-              <td>{{ alumno.nombre }} {{ alumno.apellidos }}</td>
-              <td>{{ alumno.curso }}</td>
-              <td class="text-truncate" style="max-width: 250px;">
-                <span class="text-muted fst-italic">{{ alumno.observaciones || '---' }}</span>
-              </td>
-              <td>
-                <router-link :to="'/alumno/' + alumno.id" class="btn btn-primary btn-sm">
-                  Ver Ficha
-                </router-link>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="table-responsive">
+          <table class="table table-hover align-middle mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>ID</th>
+                <th>Nombre Completo</th>
+                <th>Curso</th>
+                <th>Observaciones</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="alumno in alumnos" :key="alumno.id">
+                <td>{{ alumno.id }}</td>
+                <td>{{ alumno.nombre }} {{ alumno.apellidos }}</td>
+                <td>{{ alumno.curso }}</td>
+                <td class="text-truncate" style="max-width: 250px;">
+                  <span class="text-muted fst-italic">{{ alumno.observaciones || '---' }}</span>
+                </td>
+                <td>
+                  <router-link :to="'/alumno/' + alumno.id" class="btn btn-primary btn-sm">
+                    Ver Ficha
+                  </router-link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -126,5 +129,5 @@ onMounted(obtenerAlumnos)
 </template>
 
 <style scoped>
-/* Todo el CSS anterior se ha eliminado. Bootstrap hace el trabajo. */
+/* Sin CSS manual, todo limpio con Bootstrap */
 </style>

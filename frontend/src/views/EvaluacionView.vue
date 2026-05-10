@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
-
+import { useRoute, useRouter } from 'vue-router'
+import api from '../axios'
 
 const route = useRoute()
+const router = useRouter()
 const alumnoId = route.params.id
 
-// Definimos los moldes de nuestros datos
+// Moldes de datos
 interface Criterio {
   id: number;
   identificador: string;
@@ -16,7 +17,7 @@ interface Criterio {
   rubrica_3: string | null;
   rubrica_4: string | null;
   nota: number | null;
-  [key: string]: string | number | null; // Elimina error de any
+  [key: string]: string | number | null;
 }
 
 interface Competencia {
@@ -31,18 +32,6 @@ interface Area {
   competencias: Competencia[];
 }
 
-interface Criterio {
-  id: number;
-  identificador: string;
-  texto: string;
-}
-
-interface Competencia {
-  id: number;
-  texto: string;
-  criterios: Criterio[];
-}
-
 interface NotaGuardada {
   id: number;
   alumno_id: number;
@@ -51,9 +40,7 @@ interface NotaGuardada {
   valor: number;
 }
 
-// -------------------------------------------------------------------
-
-// 1. ESCALA DE EVALUACIÓN
+// 1. ESCALA
 const escala = [
   { valor: 1, titulo: 'Poco Adecuado', color: '#fee2e2', borde: '#ef4444', textoColor: '#b91c1c' },
   { valor: 2, titulo: 'Adecuado', color: '#fef3c7', borde: '#f59e0b', textoColor: '#b45309' },
@@ -61,16 +48,16 @@ const escala = [
   { valor: 4, titulo: 'Excelente', color: '#e0e7ff', borde: '#6366f1', textoColor: '#4338ca' }
 ]
 
-// 2. VARIABLES REACTIVAS
+// 2. VARIABLES
 const areas = ref<Area[]>([])
 const tabActiva = ref<number | null>(null)
 const trimestreActivo = ref(1)
 
-// 3. DESCARGAR LA RÚBRICA REAL DESDE LARAVEL
+// 3. CARGAR RÚBRICA
 const cargarRubrica = async () => {
   try {
-    const res = await fetch('http://localhost:8000/api/rubricas')
-    const data: Area[] = await res.json()
+    const res = await api.get('/api/rubricas')
+    const data: Area[] = res.data
 
     data.forEach((area: Area) => {
       area.competencias.forEach((comp: Competencia) => {
@@ -88,13 +75,13 @@ const cargarRubrica = async () => {
     console.error("Error al cargar las rúbricas:", error)
   }
 }
-// 3.5 DESCARGAR LAS NOTAS GUARDADAS
+
+// 3.5 CARGAR NOTAS
 const cargarNotas = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/api/evaluacion/${alumnoId}/${trimestreActivo.value}`)
-    const notasGuardadas = await res.json()
+    const res = await api.get(`/api/evaluacion/${alumnoId}/${trimestreActivo.value}`)
+    const notasGuardadas = res.data
 
-    // 1. Primero, borramos (ponemos a null) todas las notas por si venimos de otro trimestre
     areas.value.forEach((area: Area) => {
       area.competencias.forEach((comp: Competencia) => {
         comp.criterios.forEach((crit: Criterio) => {
@@ -103,13 +90,12 @@ const cargarNotas = async () => {
       })
     })
 
-    // 2. Pintamos las notas que vienen de la base de datos
     notasGuardadas.forEach((notaGuardada: NotaGuardada) => {
       areas.value.forEach((area: Area) => {
         area.competencias.forEach((comp: Competencia) => {
           const criterioEncontrado = comp.criterios.find(c => c.id === notaGuardada.criterio_id)
           if (criterioEncontrado) {
-            criterioEncontrado.nota = notaGuardada.valor // ¡Aquí se marca el botón automáticamente!
+            criterioEncontrado.nota = notaGuardada.valor
           }
         })
       })
@@ -119,12 +105,11 @@ const cargarNotas = async () => {
   }
 }
 
-// Si el profesor cambia el Trimestre en el desplegable recargamos las notas
 watch(trimestreActivo, () => {
   cargarNotas()
 })
 
-// 4. GUARDAR NOTAS EN LARAVEL
+// 4. GUARDAR
 const guardarEvaluacionFinal = async () => {
   const notasParaGuardar: { criterio_id: number, valor: number }[] = []
 
@@ -147,30 +132,23 @@ const guardarEvaluacionFinal = async () => {
   }
 
   try {
-    const res = await fetch('http://localhost:8000/api/evaluacion', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        alumno_id: alumnoId,
-        trimestre: trimestreActivo.value,
-        notas: notasParaGuardar
-      })
+    const res = await api.post('/api/evaluacion', {
+      alumno_id: alumnoId,
+      trimestre: trimestreActivo.value,
+      notas: notasParaGuardar
     })
 
-    const respuestaServidor = await res.json()
-    alert('✅ ' + respuestaServidor.mensaje)
+    alert('✅ ' + res.data.mensaje)
   } catch (error) {
     console.error("Error al guardar:", error)
-    alert('❌ Hubo un error al guardar las notas en la base de datos.')
+    alert('❌ Hubo un error al guardar las notas.')
   }
 }
 
-// Control de pestaña activa
 const areaActual = computed(() => {
   return areas.value.find(a => a.id === tabActiva.value)
 })
 
-// Cálculos de medias
 const mediaAreaActiva = computed(() => {
   let total = 0, cantidad = 0
   if (!areaActual.value) return 0
@@ -187,7 +165,6 @@ const infoMediaArea = computed(() => {
   const media = mediaAreaActiva.value
   if (media === 0) return { titulo: 'Sin evaluar', color: '#f3f4f6', borde: '#d1d5db', textoColor: '#6b7280' }
 
-  // <-- Adiós al error "posiblemente undefined" añadiendo la exclamación !
   if (media < 1.5) return escala[0]!
   if (media < 2.5) return escala[1]!
   if (media < 3.5) return escala[2]!
@@ -210,59 +187,91 @@ const puntuar = (criterio: Criterio, valor: number) => { criterio.nota = valor }
 
 onMounted(async () => {
   await cargarRubrica()
-  await cargarNotas() // Cargamos las notas después de tener la estructura
+  await cargarNotas()
 })
-
 </script>
+
 <template>
-  <div class="contenedor-evaluacion">
+  <div class="container mt-4 mb-5">
 
-    <header class="cabecera">
-      <div class="cabecera-navegacion">
-        <button @click="$router.push(`/alumno/${$route.params.id}`)" class="btn-volver">
-          ← Volver al Perfil del Alumno
-        </button>
-      </div>
-      <div class="titulos">
-        <h2>Evaluación Trimestral</h2>
-        <span class="info-alumno">Alumno ID: {{ alumnoId }}</span>
-      </div>
+    <div class="mb-4">
+      <button @click="router.push(`/alumno/${alumnoId}`)" class="btn btn-outline-secondary btn-sm mb-3 fw-bold">
+        &larr; Volver al Perfil del Alumno
+      </button>
 
-      <div class="caja-media">
-        <div class="media-numerica">Media del Área: <strong>{{ mediaAreaActiva > 0 ? mediaAreaActiva.toFixed(2) : '0.00' }}</strong> / 4.00</div>
-        <div class="etiqueta-resultado" :style="{ backgroundColor: infoMediaArea.color, borderColor: infoMediaArea.borde, color: infoMediaArea.textoColor }">
-          {{ infoMediaArea.titulo }}
+      <div class="d-flex flex-wrap justify-content-between align-items-end border-bottom pb-3 mb-4 gap-3">
+        <div>
+          <h2 class="fw-bolder mb-2 display-6 text-dark">Evaluación Trimestral</h2>
+          <span class="badge bg-primary bg-opacity-10 text-primary border border-primary rounded-pill px-3 py-2 fs-6">
+            Alumno ID: {{ alumnoId }}
+          </span>
+        </div>
+
+        <div class="d-flex align-items-center gap-3 bg-light p-3 border rounded-3 shadow-sm">
+          <div class="fs-5 text-secondary">
+            Media del Área: <strong class="text-primary fs-4">{{ mediaAreaActiva > 0 ? mediaAreaActiva.toFixed(2) : '0.00' }}</strong> / 4.00
+          </div>
+          <div class="badge rounded-pill border border-2 px-3 py-2 fs-6"
+               :style="{ backgroundColor: infoMediaArea.color, borderColor: infoMediaArea.borde, color: infoMediaArea.textoColor }">
+            {{ infoMediaArea.titulo }}
+          </div>
         </div>
       </div>
-    </header>
+    </div>
 
-    <div v-if="areas.length === 0" class="mensaje-carga">
+    <div v-if="areas.length === 0" class="alert alert-info text-center py-5 shadow-sm fw-bold">
       ⏳ Descargando rúbrica oficial desde la base de datos...
     </div>
 
-    <div v-else class="navegacion-tabs">
-      <button v-for="area in areas" :key="area.id" class="tab-btn" :class="{ 'activo': tabActiva === area.id }" @click="tabActiva = area.id">
-        {{ area.nombre }}
-      </button>
-    </div>
+    <div v-else>
+      <ul class="nav nav-tabs mb-4">
+        <li class="nav-item" v-for="area in areas" :key="area.id">
+          <button class="nav-link fw-bold text-secondary"
+                  :class="{ 'active text-primary bg-light border-bottom-0': tabActiva === area.id }"
+                  @click="tabActiva = area.id">
+            {{ area.nombre }}
+          </button>
+        </li>
+      </ul>
 
-    <div v-if="areaActual" class="bloque-area">
-      <h2 class="titulo-area">{{ areaActual.nombre }}</h2>
+      <div v-if="areaActual" class="mb-5 bg-white p-4 rounded-3 border shadow-sm">
+        <h3 class="fw-bold text-dark border-bottom border-primary pb-2 mb-4 d-inline-block">
+          {{ areaActual.nombre }}
+        </h3>
 
-      <div v-for="competencia in areaActual.competencias" :key="competencia.id" class="bloque-competencia">
-        <div class="texto-competencia"><strong>Competencia específica:</strong> {{ competencia.texto }}</div>
+        <div v-for="competencia in areaActual.competencias" :key="competencia.id" class="mb-5">
 
-        <div v-for="criterio in competencia.criterios" :key="criterio.id" class="bloque-criterio">
-          <div class="texto-criterio"><strong>Criterio {{ criterio.identificador }}:</strong> {{ criterio.texto.replace(/^[0-9.]+\s*/, '') }}</div>
+          <div class="mb-4 pb-3 border-bottom">
+            <h5 class="text-dark fw-bold mb-2">
+              <span class="text-primary fs-4 me-2">●</span> Competencia específica:
+            </h5>
+            <p class="text-secondary fs-6 ms-4 mb-0">{{ competencia.texto }}</p>
+          </div>
 
-          <div class="grid-rubrica">
-            <div v-for="nivel in escala" :key="nivel.valor" class="tarjeta-rubrica" :class="{ 'seleccionada': criterio.nota === nivel.valor }" :style="{ borderColor: criterio.nota === nivel.valor ? nivel.borde : 'transparent', backgroundColor: criterio.nota === nivel.valor ? nivel.color : '#f9fafb' }" @click="puntuar(criterio, nivel.valor)">
-              <div class="cabecera-tarjeta" :style="{ color: nivel.textoColor }">
-                {{ nivel.titulo }}
-                <div class="radio-custom" :class="{ 'activo': criterio.nota === nivel.valor }"><div class="punto-interior" :style="{ backgroundColor: nivel.borde }"></div></div>
-              </div>
-              <div class="texto-rubrica">
-                {{ criterio['rubrica_' + nivel.valor] }}
+          <div class="ps-0 ps-md-4">
+            <div v-for="criterio in competencia.criterios" :key="criterio.id" class="border pt-4 pb-4 px-4 mt-4 rounded-3 bg-light">
+              <p class="mb-3 text-secondary fs-6">
+                <strong class="text-dark">Criterio {{ criterio.identificador }}:</strong> {{ criterio.texto.replace(/^[0-9.]+\s*/, '') }}
+              </p>
+
+              <div class="row g-3">
+                <div v-for="nivel in escala" :key="nivel.valor" class="col-12 col-md-6 col-xl-3">
+                  <div class="card h-100 cursor-pointer tarjeta-hover"
+                       :class="{ 'shadow': criterio.nota === nivel.valor }"
+                       :style="{ borderColor: criterio.nota === nivel.valor ? nivel.borde : 'rgba(0,0,0,0.1)', backgroundColor: criterio.nota === nivel.valor ? nivel.color : '#fff', borderWidth: '2px' }"
+                       @click="puntuar(criterio, nivel.valor)">
+                    <div class="card-header bg-transparent d-flex justify-content-between align-items-center fw-bold border-bottom-0 pb-0"
+                         :style="{ color: nivel.textoColor }">
+                      {{ nivel.titulo }}
+                      <div class="radio-custom" :class="{ 'activo': criterio.nota === nivel.valor }">
+                        <div class="punto-interior" :style="{ backgroundColor: nivel.borde }"></div>
+                      </div>
+                    </div>
+                    <div class="card-body text-secondary small pt-2">
+                      {{ criterio['rubrica_' + nivel.valor] }}
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -270,65 +279,36 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="panel-guardar">
-      <div v-if="mediaGlobal !== '0.00'" class="media-global-texto">
-        Nota Trimestral Global: <strong>{{ mediaGlobal }}</strong> / 4.00
+    <div class="mt-5 pt-4 border-top d-flex flex-column align-items-end gap-3">
+      <div v-if="mediaGlobal !== '0.00'" class="bg-dark text-white px-4 py-2 rounded-3 fs-5 shadow-sm">
+        Nota Trimestral Global: <strong class="text-success fs-4">{{ mediaGlobal }}</strong> / 4.00
       </div>
 
-      <div class="controles-guardado">
-        <div class="selector-trimestre">
-          <label>Evaluando:</label>
-          <select v-model="trimestreActivo" class="select-trim">
+      <div class="d-flex flex-wrap gap-3 align-items-center">
+        <div class="d-flex align-items-center gap-2 bg-light p-2 px-3 rounded border shadow-sm">
+          <label class="fw-bold text-secondary mb-0">Evaluando:</label>
+          <select v-model="trimestreActivo" class="form-select form-select-sm w-auto fw-bold cursor-pointer">
             <option :value="1">1º Trimestre</option>
             <option :value="2">2º Trimestre</option>
             <option :value="3">3º Trimestre</option>
           </select>
         </div>
-        <button @click="guardarEvaluacionFinal" class="btn-guardar-final">💾 Guardar Evaluación Completa</button>
+        <button @click="guardarEvaluacionFinal" class="btn btn-primary btn-lg fw-bold px-4 shadow">
+          💾 Guardar Evaluación Completa
+        </button>
       </div>
     </div>
+
   </div>
 </template>
 
 <style scoped>
-.contenedor-evaluacion { padding: 20px; max-width: 1400px; margin: 0 auto; font-family: sans-serif; color: #374151; }
-.mensaje-carga { text-align: center; font-size: 1.2em; color: #6b7280; padding: 40px; background: #f3f4f6; border-radius: 8px; margin-top: 20px;}
-.cabecera { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #e5e7eb; padding-bottom: 15px; }
-.titulos h2 { margin: 0 0 10px 0; color: #0f172a; font-size: 2.4rem; font-weight: 800; }
-.info-alumno { background: #e0e7ff; color: #4338ca; padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em; }
-.caja-media { display: flex; align-items: center; gap: 20px; background: #f3f4f6; padding: 15px 25px; border-radius: 8px; border: 1px solid #d1d5db; }
-.media-numerica { font-size: 1.2em; }
-.media-numerica strong { color: #2563eb; font-size: 1.4em; }
-.etiqueta-resultado { padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 1.1em; border: 2px solid; letter-spacing: 0.5px; transition: all 0.3s ease; }
-.navegacion-tabs { display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 2px solid #e5e7eb; padding-bottom: 0px; }
-.tab-btn { background: #f9fafb; color: #6b7280; border: 1px solid transparent; border-bottom: none; padding: 12px 24px; border-radius: 8px 8px 0 0; cursor: pointer; font-weight: bold; font-size: 1.05em; transition: all 0.2s; margin-bottom: -2px; }
-.tab-btn:hover { background: #f3f4f6; color: #374151; }
-.tab-btn.activo { background: white; color: #2563eb; border-color: #e5e7eb; border-top: 3px solid #3b82f6; }
-.bloque-area { margin-bottom: 40px; }
-.titulo-area { color: #1f2937; font-size: 1.5em; border-bottom: 3px solid #3b82f6; padding-bottom: 10px; display: inline-block; margin-bottom: 25px; }
-.bloque-competencia { background: white; border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-.texto-competencia { font-size: 1.05em; line-height: 1.5; color: #1f2937; margin-bottom: 25px; padding: 15px; background: #f9fafb; border-left: 4px solid #6366f1; border-radius: 4px; }
-.bloque-criterio { margin-left: 15px; border-top: 1px dashed #d1d5db; padding-top: 20px; }
-.texto-criterio { font-size: 1em; line-height: 1.5; margin-bottom: 20px; color: #4b5563; }
-.grid-rubrica { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-.tarjeta-rubrica { border: 2px solid transparent; border-radius: 8px; padding: 15px; cursor: pointer; transition: all 0.2s ease; position: relative; }
-.tarjeta-rubrica:hover { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-color: #d1d5db !important; }
-.tarjeta-rubrica.seleccionada { transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-.cabecera-tarjeta { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 1.1em; margin-bottom: 15px; border-bottom: 1px solid rgba(0,0,0,0.1); padding-bottom: 10px; }
-.texto-rubrica { font-size: 0.9em; line-height: 1.5; color: #4b5563; }
+.cursor-pointer { cursor: pointer; }
+.tarjeta-hover { transition: all 0.2s ease; }
+.tarjeta-hover:hover { transform: translateY(-3px); border-color: #adb5bd !important; }
+
 .radio-custom { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #9ca3af; display: flex; align-items: center; justify-content: center; background: white; transition: all 0.2s; }
-.tarjeta-rubrica.seleccionada .radio-custom { border-color: inherit; }
+.card.shadow .radio-custom { border-color: inherit; }
 .punto-interior { width: 12px; height: 12px; border-radius: 50%; opacity: 0; transform: scale(0); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
 .radio-custom.activo .punto-interior { opacity: 1; transform: scale(1); }
-.panel-guardar { margin-top: 40px; padding-top: 20px; border-top: 2px solid #e5e7eb; display: flex; flex-direction: column; align-items: flex-end; gap: 15px; }
-.media-global-texto { background: #111827; color: white; padding: 10px 20px; border-radius: 6px; font-size: 1.1em; }
-.media-global-texto strong { color: #10b981; font-size: 1.3em; }
-.controles-guardado { display: flex; gap: 15px; align-items: center; }
-.selector-trimestre { display: flex; align-items: center; gap: 10px; font-weight: bold; color: #4b5563; background: #f3f4f6; padding: 10px 15px; border-radius: 8px; border: 1px solid #d1d5db; }
-.select-trim { font-size: 1em; padding: 5px; border-radius: 4px; border: 1px solid #9ca3af; cursor: pointer;}
-.btn-guardar-final { background: #4f46e5; color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-.btn-guardar-final:hover { background: #4338ca; }
-.cabecera-navegacion {  margin-bottom: 20px;}
-.btn-volver {  background-color: transparent; color: #475569;  border: 1px solid #cbd5e1;  padding: 8px 16px;  border-radius: 6px;  cursor: pointer;  font-weight: 600;  font-size: 0.95rem;  transition: all 0.2s ease;  margin-bottom: 25px; }
-.btn-volver:hover {  background-color: #f1f5f9;  color: #0f172a;  border-color: #94a3b8; }
 </style>

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '../axios' // Importamos el axios que acabamos de configurar
+import api from '../axios'
 import { useAuthStore } from '../stores/auth'
+
 const auth = useAuthStore()
 const router = useRouter()
 const email = ref('')
@@ -31,8 +32,8 @@ const iniciarSesion = async () => {
       // Guardamos ambos en Pinia
       auth.login(nombreLogueado, rolLogueado)
 
-      // Redirigimos a la lista
-      router.push('/alumnos')
+      // ¡AQUÍ ESTABA EL CAMBIO! Ahora redirige al Panel de Control
+      router.push('/panel-de-control')
   } catch (error) {
     mensajeError.value = 'Credenciales incorrectas o error en el servidor.'
     console.error("Error en el login:", error)
@@ -41,39 +42,48 @@ const iniciarSesion = async () => {
 </script>
 
 <template>
-  <div class="login-container">
-    <div class="login-box">
-      <h2>Acceso Profesores</h2>
-      <p>Sistema de Evaluación Infantil</p>
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh; background-color: #f3f4f6;">
 
-      <form @submit.prevent="iniciarSesion" class="login-form">
-        <div class="form-group">
-          <label for="email">Correo Electrónico</label>
-          <input type="email" id="email" v-model="email" required placeholder="profesor@colegio.com" />
+    <div class="card shadow border-0 p-4 w-100" style="max-width: 400px; border-radius: 8px;">
+
+      <div class="text-center mb-4">
+        <h2 class="text-dark mb-1">Acceso Profesores</h2>
+        <p class="text-muted small">Sistema de Evaluación Infantil</p>
+      </div>
+
+      <form @submit.prevent="iniciarSesion">
+
+        <div class="mb-3 text-start">
+          <label for="email" class="form-label fw-bold text-secondary mb-1" style="font-size: 0.9em;">Correo Electrónico</label>
+          <input type="email" id="email" v-model="email" class="form-control" required placeholder="profesor@colegio.com" />
         </div>
 
-        <div class="form-group">
-          <label for="password">Contraseña</label>
-          <input type="password" id="password" v-model="password" required placeholder="********" />
+        <div class="mb-4 text-start">
+          <label for="password" class="form-label fw-bold text-secondary mb-1" style="font-size: 0.9em;">Contraseña</label>
+          <input type="password" id="password" v-model="password" class="form-control" required placeholder="********" />
         </div>
 
-        <p v-if="mensajeError" class="error">{{ mensajeError }}</p>
+        <div v-if="mensajeError" class="alert alert-danger py-2 text-center" style="font-size: 0.9em;" role="alert">
+          {{ mensajeError }}
+        </div>
 
-        <button type="submit" class="btn-login">Iniciar Sesión</button>
+        <button type="submit" class="btn btn-primary w-100 py-2 fw-bold login-btn">
+          Iniciar Sesión
+        </button>
       </form>
     </div>
   </div>
 </template>
 
 <style scoped>
-.login-container { display: flex; justify-content: center; align-items: center; min-height: 80vh; background-color: #f3f4f6; }
-.login-box { background: white; padding: 40px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-.login-box h2 { color: #1f2937; margin-bottom: 5px; }
-.login-box p { color: #6b7280; margin-bottom: 30px; font-size: 0.9em; }
-.form-group { text-align: left; margin-bottom: 20px; }
-.form-group label { display: block; font-weight: bold; margin-bottom: 5px; color: #374151; font-size: 0.9em; }
-.form-group input { width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 1em; box-sizing: border-box; }
-.btn-login { width: 100%; padding: 12px; background-color: #4f46e5; color: white; border: none; border-radius: 6px; font-size: 1.1em; font-weight: bold; cursor: pointer; transition: background 0.2s; }
-.btn-login:hover { background-color: #4338ca; }
-.error { color: #dc2626; background: #fee2e2; padding: 10px; border-radius: 4px; font-size: 0.9em; margin-bottom: 20px; }
+/* Solo dejamos un pequeño ajuste de CSS para mantener tu color azul exacto en el botón */
+.login-btn {
+  background-color: #4f46e5;
+  border-color: #4f46e5;
+  transition: background 0.2s;
+}
+.login-btn:hover {
+  background-color: #4338ca;
+  border-color: #4338ca;
+}
 </style>

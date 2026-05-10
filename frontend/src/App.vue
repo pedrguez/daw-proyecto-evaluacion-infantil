@@ -1,96 +1,75 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRouter } from 'vue-router'
-import { useAuthStore } from './stores/auth' // Importamos el almacén
+import { useAuthStore } from './stores/auth'
 
-const auth = useAuthStore() // Usamos el almacén
+const auth = useAuthStore()
 const router = useRouter()
 
-const cerrarSesion = () => {
-  auth.logout() // Llamamos a la acción de Pinia
+const cerrarSesion = async () => {
+  await auth.logout() // Llamamos a la acción de Pinia (que ahora se comunica con Laravel)
   router.push('/')
 }
 </script>
 
 <template>
-  <header>
-    <nav>
-      <template v-if="auth.estaAutenticado">
-          <RouterLink to="/dashboard">Dashboard</RouterLink>
-          <RouterLink to="/alumnos">Lista de Alumnos</RouterLink>
-          <RouterLink to="/gestion-familiar" class="nav-link">Gestión Familiar</RouterLink>
-          <RouterLink to="/diario-aula" class="nav-link">Diario de Aula</RouterLink>
-          <RouterLink v-if="auth.rolUsuario === 'admin'" to="/gestion-personal" class="nav-link">Gestión Personal</RouterLink>
-          <span class="bienvenida">Hola, {{ auth.nombreUsuario }} ({{ auth.rolUsuario }})</span>
-          <button @click="cerrarSesion" class="btn-logout">Cerrar Sesión</button>
-        </template>
+  <header v-if="auth.estaAutenticado">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm mb-4">
+      <div class="container">
+
+        <span class="navbar-brand fw-bold text-primary">
+          Evaluación Infantil
+        </span>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuNavegacion" aria-controls="menuNavegacion" aria-expanded="false" aria-label="Desplegar menú">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menuNavegacion">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <RouterLink to="/panel-de-control" class="nav-link" active-class="active fw-bold text-primary">Panel de Control</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink to="/alumnos" class="nav-link" active-class="active fw-bold text-primary">Alumnos</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink to="/gestion-familiar" class="nav-link" active-class="active fw-bold text-primary">Gestión Familiar</RouterLink>
+            </li>
+            <li class="nav-item">
+              <RouterLink to="/diario-aula" class="nav-link" active-class="active fw-bold text-primary">Diario de Aula</RouterLink>
+            </li>
+            <li class="nav-item" v-if="auth.rolUsuario === 'admin'">
+              <RouterLink to="/gestion-personal" class="nav-link" active-class="active fw-bold text-primary">Gestión Personal</RouterLink>
+            </li>
+          </ul>
+
+          <div class="d-flex align-items-center gap-3 mt-3 mt-lg-0">
+            <span class="text-muted small">
+              Hola, <span class="fw-bold text-dark">{{ auth.nombreUsuario }}</span>
+              ({{ auth.rolUsuario === 'admin' ? 'Director' : 'Profesor' }})
+            </span>
+            <button @click="cerrarSesion" class="btn btn-outline-danger btn-sm">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
+
+      </div>
     </nav>
   </header>
-  <RouterView />
+
+  <main class="container">
+    <RouterView />
+  </main>
 </template>
 
 <style scoped>
-/* Estilos básicos */
-nav {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 25px; /* Espacio entre los botones */
-  padding: 20px;
-  background-color: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  margin-bottom: 30px;
+/* ¡Mira qué limpio! Bootstrap se encarga de casi todo el diseño. */
+/* Solo dejamos esto para que al pasar el ratón por los enlaces se note un poco */
+.nav-link {
+  transition: color 0.2s ease-in-out;
 }
-
-nav a {
-  text-decoration: none;
-  color: #475569;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: all 0.3s ease;
-}
-
-nav a:hover, nav a.router-link-active {
-  color: #4f46e5; /* Color morado cuando pasas el ratón o estás en esa página */
-}
-
-nav .btn-logout {
-  color: #94a3b8; /* Gris apagado para que no destaque más que el resto */
-  margin-left: 20px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  padding: 5px 10px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-nav .btn-logout:hover {
-  color: #dc2626; /* Solo se pone rojo (peligro) cuando pasas el ratón por encima */
-}
-
-.menu {
-  background-color: #f3f4f6;
-  padding: 15px;
-  display: flex;
-  gap: 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.menu a {
-  text-decoration: none;
-  color: #374151;
-  font-weight: bold;
-}
-
-.menu a.router-link-exact-active {
-  color: #10b981; /* Verde cuando estás en esa página */
-}
-
-.contenedor {
-  padding: 20px;
-  border: 1px dashed #ccc;
-  border-radius: 8px;
+.nav-link:hover {
+  color: #4f46e5 !important;
 }
 </style>

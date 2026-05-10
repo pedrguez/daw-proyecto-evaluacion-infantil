@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRoute} from 'vue-router'
+import { useRoute } from 'vue-router'
+import api from '../axios' // CAMBIO VITAL: Importamos Axios para pasar la seguridad de Sanctum
 
 // Definimos los moldes de nuestros datos
 interface Alumno {
@@ -42,15 +43,15 @@ const alumnoId = route.params.id
 const alumno = ref<Alumno | null>(null)
 const modoEdicion = ref(false)
 
-// NUEVAS VARIABLES PARA EL BOLETÍN
+// VARIABLES PARA EL BOLETÍN
 const rubricaCompleta = ref<Area[]>([])
 const notasAlumno = ref<NotaGuardada[]>([])
 
 // 1. Cargar datos básicos del alumno
 const cargarAlumno = async () => {
   try {
-    const res = await fetch(`http://localhost:8000/api/alumnos/${alumnoId}`)
-    alumno.value = await res.json()
+    const res = await api.get(`/api/alumnos/${alumnoId}`)
+    alumno.value = res.data
   } catch (error) {
     console.error("Error al cargar el alumno:", error)
   }
@@ -59,11 +60,11 @@ const cargarAlumno = async () => {
 // 2. Cargar datos para el Boletín (Rúbricas + Notas)
 const cargarBoletin = async () => {
   try {
-    const resRubrica = await fetch('http://localhost:8000/api/rubricas')
-    rubricaCompleta.value = await resRubrica.json()
+    const resRubrica = await api.get('/api/rubricas')
+    rubricaCompleta.value = resRubrica.data
 
-    const resNotas = await fetch(`http://localhost:8000/api/alumnos/${alumnoId}/notas`)
-    notasAlumno.value = await resNotas.json()
+    const resNotas = await api.get(`/api/alumnos/${alumnoId}/notas`)
+    notasAlumno.value = resNotas.data
   } catch (error) {
     console.error("Error al cargar el boletín:", error)
   }
@@ -84,14 +85,10 @@ const obtenerTextoNota = (valor: number | string) => {
   return '-'
 }
 
-// 4. Guardar cambios del perfil (tu código anterior)
+// 4. Guardar cambios del perfil
 const guardarCambios = async () => {
   try {
-    await fetch(`http://localhost:8000/api/alumnos/${alumnoId}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(alumno.value)
-    })
+    await api.put(`/api/alumnos/${alumnoId}`, alumno.value)
     modoEdicion.value = false
     alert('✅ Datos actualizados')
   } catch (error) {
@@ -99,7 +96,6 @@ const guardarCambios = async () => {
   }
 }
 
-// Al entrar a la pantalla, cargar todo
 onMounted(async () => {
   await cargarAlumno()
   await cargarBoletin()
@@ -107,78 +103,103 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="alumno" class="ficha-alumno">
-    <header class="cabecera-ficha">
-      <div class="navegacion">
-        <button @click="$router.push('/alumnos')" class="btn-volver">
-          ← Volver a la lista
-        </button>
-      </div>
-      <div class="titulo-perfil">
-        <div class="edicion-nombre">
-          <h1 v-if="!modoEdicion">{{ alumno.nombre }} {{ alumno.apellidos }}</h1>
+  <div v-if="alumno" class="container mt-4 mb-5">
+
+    <header class="mb-4">
+      <button @click="$router.push('/alumnos')" class="btn btn-outline-secondary btn-sm mb-3 fw-bold">
+        &larr; Volver a la lista
+      </button>
+
+      <div class="d-flex flex-wrap justify-content-between align-items-center bg-white p-4 border rounded-top gap-3">
+        <div class="d-flex gap-2 flex-grow-1">
+          <h1 v-if="!modoEdicion" class="m-0 fw-bolder text-dark display-6">{{ alumno.nombre }} {{ alumno.apellidos }}</h1>
           <template v-else>
-            <input v-model="alumno.nombre" class="input-edit" placeholder="Nombre">
-            <input v-model="alumno.apellidos" class="input-edit" placeholder="Apellidos">
+            <input v-model="alumno.nombre" class="form-control form-control-lg" placeholder="Nombre">
+            <input v-model="alumno.apellidos" class="form-control form-control-lg" placeholder="Apellidos">
           </template>
         </div>
-        <button v-if="!modoEdicion" @click="modoEdicion = true" class="btn-editar">✏️ Editar Perfil</button>
-        <button v-else @click="guardarCambios" class="btn-guardar">💾 Guardar Cambios</button>
+        <button v-if="!modoEdicion" @click="modoEdicion = true" class="btn btn-light border fw-bold text-nowrap">✏️ Editar Perfil</button>
+        <button v-else @click="guardarCambios" class="btn btn-success fw-bold text-nowrap">💾 Guardar Cambios</button>
       </div>
     </header>
 
-    <div class="datos-personales">
-      <div class="grid-datos">
-        <div class="dato-item">
-          <strong>Fecha Nacimiento:</strong>
-          <span v-if="!modoEdicion">{{ alumno.fecha_nacimiento }}</span>
-          <input v-else type="date" v-model="alumno.fecha_nacimiento" class="input-edit" />
+    <div class="bg-white p-4 border border-top-0 rounded-bottom mb-5">
+      <div class="row g-3 mb-4">
+        <div class="col-md-6">
+          <label class="fw-bold text-secondary text-uppercase small d-block mb-1">Fecha Nacimiento:</label>
+          <span v-if="!modoEdicion" class="fs-5">{{ alumno.fecha_nacimiento }}</span>
+          <input v-else type="date" v-model="alumno.fecha_nacimiento" class="form-control" />
         </div>
       </div>
-      <div class="dato-item observaciones">
-        <strong>Observaciones iniciales:</strong>
-        <p v-if="!modoEdicion" class="texto-observaciones">{{ alumno.observaciones || 'No hay observaciones registradas.' }}</p>
-        <textarea v-else v-model="alumno.observaciones" class="input-edit textarea-edit"></textarea>
+      <div class="col-12">
+        <label class="fw-bold text-secondary text-uppercase small d-block mb-1">Observaciones iniciales:</label>
+        <div v-if="!modoEdicion" class="bg-light p-3 rounded border fst-italic text-secondary">
+          {{ alumno.observaciones || 'No hay observaciones registradas.' }}
+        </div>
+        <textarea v-else v-model="alumno.observaciones" class="form-control" rows="3"></textarea>
       </div>
     </div>
 
-    <div class="seccion-evaluar">
-      <h2>Panel de Evaluación</h2>
-      <p>Accede a la rúbrica interactiva para calificar el progreso de este alumno.</p>
-      <router-link :to="`/evaluacion/${alumno.id}`" class="btn-evaluar">Ir a la Rúbrica de Evaluación</router-link>
+    <div class="alert alert-primary text-center p-5 mb-5 border-primary border-opacity-25 rounded-3">
+      <h2 class="text-primary fw-bolder mb-3">Panel de Evaluación</h2>
+      <p class="text-dark fs-5 mb-4">Accede a la rúbrica interactiva para calificar el progreso de este alumno.</p>
+      <router-link :to="`/evaluacion/${alumno.id}`" class="btn btn-primary btn-lg fw-bold px-5">
+        Ir a la Rúbrica de Evaluación &rarr;
+      </router-link>
     </div>
 
-    <div class="seccion-boletin" v-if="rubricaCompleta.length > 0">
-      <h2>Boletín de Calificaciones</h2>
-      <p class="subtitulo-boletin">Historial de notas separadas por áreas, competencias y trimestres.</p>
+    <div v-if="rubricaCompleta.length > 0" class="mt-5 pt-4 border-top">
+      <div class="mb-4">
+        <h2 class="fw-bolder text-dark">Boletín de Calificaciones</h2>
+        <p class="text-secondary">Historial de notas separadas por áreas, competencias y trimestres.</p>
+      </div>
 
-      <div v-for="area in rubricaCompleta" :key="area.id" class="boletin-area">
-        <h3>{{ area.nombre }}</h3>
+      <div v-for="area in rubricaCompleta" :key="area.id" class="mb-5 bg-white p-4 rounded-3 border">
+        <h3 class="fw-bold text-dark border-bottom border-primary pb-2 mb-4 d-inline-block">
+          {{ area.nombre }}
+        </h3>
 
-        <div v-for="comp in area.competencias" :key="comp.id" class="boletin-comp">
-          <p class="texto-comp"><strong>Competencia:</strong> {{ comp.texto }}</p>
+        <div v-for="comp in area.competencias" :key="comp.id" class="mb-5">
 
-          <table class="tabla-notas">
-            <thead>
-              <tr>
-                <th>Criterio de Evaluación</th>
-                <th class="col-trimestre">T1</th>
-                <th class="col-trimestre">T2</th>
-                <th class="col-trimestre">T3</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="crit in comp.criterios" :key="crit.id">
-                <td class="celda-criterio">{{ crit.texto }}</td>
-                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 1)">
-                  {{ obtenerTextoNota(obtenerNota(crit.id, 1)) }}</td>
-                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 2)">
-                  {{ obtenerTextoNota(obtenerNota(crit.id, 2)) }}</td>
-                <td class="nota-celda" :class="'nota-' + obtenerNota(crit.id, 3)">
-                  {{ obtenerTextoNota(obtenerNota(crit.id, 3)) }}</td>
-              </tr>
-            </tbody>
-          </table>
+          <div class="mb-3">
+            <h6 class="text-dark fw-bold mb-1">
+              <span class="text-primary me-2">●</span> Competencia:
+            </h6>
+            <p class="text-secondary ms-4 mb-3 small">{{ comp.texto }}</p>
+          </div>
+
+          <div class="table-responsive ms-0 ms-md-4 border-start border-2 border-light ps-3">
+            <table class="table table-bordered table-sm align-middle mb-0">
+              <thead class="table-light text-secondary">
+                <tr>
+                  <th class="py-2 px-3">Criterio de Evaluación</th>
+                  <th class="text-center" style="width: 100px;">T1</th>
+                  <th class="text-center" style="width: 100px;">T2</th>
+                  <th class="text-center" style="width: 100px;">T3</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="crit in comp.criterios" :key="crit.id">
+                  <td class="text-secondary small px-3 py-2">{{ crit.texto }}</td>
+                  <td class="text-center fw-bold p-0" :class="'nota-' + obtenerNota(crit.id, 1)">
+                    <div class="d-flex align-items-center justify-content-center h-100 p-2" style="min-height: 40px;">
+                      {{ obtenerTextoNota(obtenerNota(crit.id, 1)) }}
+                    </div>
+                  </td>
+                  <td class="text-center fw-bold p-0" :class="'nota-' + obtenerNota(crit.id, 2)">
+                    <div class="d-flex align-items-center justify-content-center h-100 p-2" style="min-height: 40px;">
+                      {{ obtenerTextoNota(obtenerNota(crit.id, 2)) }}
+                    </div>
+                  </td>
+                  <td class="text-center fw-bold p-0" :class="'nota-' + obtenerNota(crit.id, 3)">
+                    <div class="d-flex align-items-center justify-content-center h-100 p-2" style="min-height: 40px;">
+                      {{ obtenerTextoNota(obtenerNota(crit.id, 3)) }}
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
@@ -187,45 +208,10 @@ onMounted(async () => {
 </template>
 
 <style scoped>
-/* ESTILOS ANTERIORES BÁSICOS */
-.ficha-alumno { padding: 30px; max-width: 1000px; margin: 0 auto; font-family: sans-serif; color: #374151; }
-.cabecera-ficha { margin-bottom: 30px; }
-.navegacion { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.btn-volver {  background-color: transparent;  color: #475569;  border: 1px solid #cbd5e1;  padding: 8px 16px;  border-radius: 6px;  cursor: pointer;  font-weight: 600;  font-size: 0.95rem;  transition: all 0.2s ease;  margin-bottom: 25px; }
-.btn-volver:hover { background-color: #f1f5f9;  color: #0f172a;  border-color: #94a3b8; }
-.titulo-perfil { display: flex; justify-content: space-between; align-items: center; background: white; padding: 20px; border-radius: 8px 8px 0 0; border-bottom: 2px solid #e5e7eb; }
-.titulo-perfil h1 { margin: 0; color: #111827; }
-.edicion-nombre { display: flex; gap: 10px; flex: 1; margin-right: 20px; }
-.input-edit { padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 1em; width: 100%; }
-.textarea-edit { min-height: 80px; resize: vertical; }
-.btn-editar { background: #f3f4f6; border: 1px solid #d1d5db; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-.btn-guardar { background: #10b981; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-.datos-personales { background: white; padding: 30px; border-radius: 0 0 8px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 30px; }
-.grid-datos { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px; }
-.dato-item strong { display: block; color: #6b7280; font-size: 0.9em; text-transform: uppercase; margin-bottom: 5px; }
-.texto-observaciones { background: #f9fafb; padding: 15px; border-radius: 6px; border: 1px dashed #d1d5db; font-style: italic; }
-.seccion-evaluar { background: #e0e7ff; padding: 25px; border-radius: 8px; text-align: center; border: 1px solid #c7d2fe; margin-bottom: 40px; }
-.seccion-evaluar h2 { margin-top: 0; color: #4338ca; }
-.btn-evaluar { display: inline-block; background: #4f46e5; color: white; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; margin-top: 10px; transition: background 0.2s; }
-.btn-evaluar:hover { background: #4338ca; }
-
-/* NUEVOS ESTILOS DEL BOLETÍN */
-.seccion-boletin { padding-top: 20px; border-top: 2px solid #e5e7eb; }
-.subtitulo-boletin { color: #6b7280; margin-bottom: 25px; }
-.boletin-area { background: white; padding: 25px; border-radius: 8px; margin-bottom: 30px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e5e7eb; }
-.boletin-area h3 { color: #2563eb; border-bottom: 2px solid #bfdbfe; padding-bottom: 10px; margin-top: 0; }
-.boletin-comp { margin-top: 20px; }
-.texto-comp { font-size: 0.95em; color: #1f2937; margin-bottom: 15px; background: #f3f4f6; padding: 10px; border-left: 4px solid #9ca3af; border-radius: 4px; }
-.tabla-notas { width: 100%; border-collapse: collapse; font-size: 0.9em; margin-bottom: 20px; }
-.tabla-notas th, .tabla-notas td { border: 1px solid #d1d5db; padding: 10px; }
-.tabla-notas th { background-color: #f9fafb; color: #374151; }
-.col-trimestre { text-align: center; width: 60px; font-weight: bold; color: #4b5563; }
-.celda-criterio { color: #4b5563; line-height: 1.4; }
-.nota-celda { text-align: center; font-weight: bold; font-size: 1.1em; background: #f9fafb; color: #9ca3af; }
-
-/* Colores dinámicos para las notas en la tabla */
-.nota-1 { background-color: #fee2e2; color: #b91c1c; }
-.nota-2 { background-color: #fef3c7; color: #b45309; }
-.nota-3 { background-color: #d1fae5; color: #047857; }
-.nota-4 { background-color: #e0e7ff; color: #4338ca; }
+/* Sin CSS innecesario, solo los colores exactos para las notas */
+.nota-1 { background-color: #fee2e2 !important; color: #b91c1c !important; }
+.nota-2 { background-color: #fef3c7 !important; color: #b45309 !important; }
+.nota-3 { background-color: #d1fae5 !important; color: #047857 !important; }
+.nota-4 { background-color: #e0e7ff !important; color: #4338ca !important; }
+.nota-- { background-color: #f9fafb !important; color: #9ca3af !important; }
 </style>

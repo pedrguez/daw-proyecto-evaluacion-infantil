@@ -4,43 +4,47 @@
       <h2>Diario de Aula</h2>
     </div>
 
-    <div class="card shadow-sm mb-4">
-      <div class="card-body">
-        <h5 class="card-title text-muted small fw-bold">📅 NUEVA ENTRADA</h5>
+    <div class="card shadow-sm border-0 mb-4 bg-light">
+      <div class="card-body p-4">
+        <h5 class="card-title text-primary small fw-bold text-uppercase mb-3">
+          Nueva Entrada
+        </h5>
         <div class="row g-3">
           <div class="col-md-3">
-            <input v-model="nuevaNota.fecha" type="date" class="form-control" />
+            <input v-model="nuevaNota.fecha" type="date" class="form-control shadow-sm" />
           </div>
           <div class="col-md-12">
-            <textarea v-model="nuevaNota.contenido" class="form-control" placeholder="¿Qué se ha hecho hoy?..." rows="3"></textarea>
+            <textarea v-model="nuevaNota.contenido" class="form-control shadow-sm" placeholder="¿Qué se ha hecho hoy en clase? Anota observaciones, hitos o incidencias..." rows="3"></textarea>
           </div>
         </div>
         <div class="d-flex justify-content-end mt-3">
-          <button @click="guardarNota" class="btn btn-primary px-4">Guardar en Diario</button>
+          <button @click="guardarNota" class="btn btn-primary px-4 fw-bold">Guardar en Diario</button>
         </div>
       </div>
     </div>
 
-    <div class="card shadow-sm mb-4 border-info">
-      <div class="card-body d-flex align-items-center gap-3">
-        <span class="fw-bold">🔍 Buscar:</span>
-        <input v-model="filtroFecha" type="date" class="form-control w-auto" />
-        <button v-if="filtroFecha" @click="filtroFecha = ''" class="btn btn-outline-secondary btn-sm">Limpiar Filtro</button>
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body d-flex flex-wrap align-items-center gap-3 py-3">
+        <span class="fw-bold text-secondary">🔍 Buscar por fecha:</span>
+        <input v-model="filtroFecha" type="date" class="form-control w-auto shadow-sm" />
+        <button v-if="filtroFecha" @click="filtroFecha = ''" class="btn btn-outline-danger btn-sm px-3">Limpiar Filtro</button>
       </div>
     </div>
 
-    <div class="row flex-column align-items-center g-4">
+    <div class="row flex-column align-items-center g-3">
       <div v-if="notasAMostrar.length === 0" class="text-center text-muted my-5">
         No hay registros para este día o el diario está vacío.
       </div>
 
       <div v-for="nota in notasAMostrar" :key="nota.id" class="col-md-10">
-        <div class="card border-info shadow-sm">
-          <div class="card-body">
-            <div class="mb-2">
-              <span class="badge border border-info text-dark fs-6">{{ formatearFecha(nota.fecha) }}</span>
+        <div class="card shadow-sm border-0 border-start border-4 border-info">
+          <div class="card-body p-4">
+            <div class="mb-3">
+              <span class="badge bg-info text-dark bg-opacity-25 border border-info rounded-pill px-3 py-2 fs-6">
+                📅 {{ formatearFecha(nota.fecha) }}
+              </span>
             </div>
-            <p class="card-text text-dark" style="white-space: pre-wrap;">{{ nota.contenido }}</p>
+            <p class="card-text text-dark mb-0" style="white-space: pre-wrap; font-size: 1.05rem;">{{ nota.contenido }}</p>
           </div>
         </div>
       </div>
@@ -50,13 +54,13 @@
       <nav>
         <ul class="pagination shadow-sm">
           <li class="page-item" :class="{ disabled: paginaActual === 1 }">
-            <button class="page-link" @click="paginaActual--">Anterior</button>
+            <button class="page-link text-primary" @click="paginaActual--">Anterior</button>
           </li>
           <li class="page-item disabled">
-            <span class="page-link text-dark">Página {{ paginaActual }} de {{ totalPaginas }}</span>
+            <span class="page-link text-dark fw-bold bg-light">Página {{ paginaActual }} de {{ totalPaginas }}</span>
           </li>
           <li class="page-item" :class="{ disabled: paginaActual >= totalPaginas }">
-            <button class="page-link" @click="paginaActual++">Siguiente</button>
+            <button class="page-link text-primary" @click="paginaActual++">Siguiente</button>
           </li>
         </ul>
       </nav>
@@ -128,7 +132,6 @@ onMounted(cargarDiario)
 </script>
 
 <style scoped>
+/* Todo manejado nativamente por las clases de Bootstrap */
 .page-link { cursor: pointer; }
-.card { transition: transform 0.2s; }
-.card:hover { transform: scale(1.01); }
 </style>

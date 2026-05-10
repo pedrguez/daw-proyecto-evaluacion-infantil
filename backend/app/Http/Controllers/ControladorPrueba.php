@@ -157,4 +157,45 @@ class ControladorPrueba extends Controller
 
         return response()->json(['mensaje' => 'Profesor guardado correctamente']);
     }
+
+    // Función para ACTUALIZAR el profesor
+    public function actualizarUsuario(Request $request, int $id) {
+        $usuario = \App\Models\User::find($id);
+
+        if (!$usuario) {
+            return response()->json(['mensaje' => 'Usuario no encontrado'], 404);
+        }
+
+        // Actualizamos los datos básicos
+        $usuario->name = $request->name;
+        $usuario->email = $request->email;
+        $usuario->role = $request->role;
+
+        // Si desde Vue enviamos una contraseña nueva, la encriptamos y la guardamos
+        if ($request->filled('password')) {
+            $usuario->password = bcrypt($request->password);
+        }
+
+        $usuario->save();
+
+        return response()->json(['mensaje' => 'Profesor actualizado correctamente'], 200);
+    }
+
+    // Función para ELIMINAR el profesor
+    public function eliminarUsuario(Request $request, int $id) {
+        $usuario = \App\Models\User::find($id);
+
+        if (!$usuario) {
+            return response()->json(['mensaje' => 'Profesor no encontrado'], 404);
+        }
+
+        // Medida de seguridad: Evitar que el director se borre a sí mismo por accidente
+        if ($request->user()->id == $id) {
+            return response()->json(['mensaje' => 'No puedes eliminar tu propia cuenta.'], 403);
+        }
+
+        $usuario->delete();
+
+        return response()->json(['mensaje' => 'Profesor eliminado correctamente'], 200);
+    }
 }

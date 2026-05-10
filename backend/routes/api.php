@@ -13,6 +13,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Rutas para Gestión de Personal(profesorado)
     Route::get('/users', [ControladorPrueba::class, 'listarUsuarios']);
     Route::post('/users', [ControladorPrueba::class, 'guardarUsuario']);
+    Route::put('/users/{id}', [ControladorPrueba::class, 'actualizarUsuario']); // Para Editar
+    Route::delete('/users/{id}', [ControladorPrueba::class, 'eliminarUsuario']); // Para Borrar
+
 });
 // ------------------------------------------------
 
