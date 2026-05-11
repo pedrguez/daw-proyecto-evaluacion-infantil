@@ -12,7 +12,7 @@
   - [Conexión API](conexion_api.md)
 
 - [Frontend y Vistas]()
-  - [Refactorización Frontend](Frontend.md)
+  - [Refactorización Frontend](frontend.md)
 
 - [Módulos de la Aplicación]()
   - [Gestión de Seguridad y Personal](gestion_seguridad_y_personal.md)

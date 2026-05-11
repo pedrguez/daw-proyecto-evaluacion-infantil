@@ -11,7 +11,8 @@ Para realizar cambios en la normativa o añadir nuevas áreas, el flujo de traba
     * Para una nueva **Área**: Usar `Area::create(['nombre' => '...'])`.
     * Para una **Competencia**: Usar `Competencia::create(['area_id' => $area->id, 'texto' => '...'])`.
     * Para un **Criterio**: Usar el bloque `Criterio::create([...])` asegurando que el `competencia_id` apunte a la competencia correcta.
-3.  ## Comandos de Actualización en Base de Datos
+
+## Comandos de Actualización en Base de Datos
 
 Dependiendo del entorno (Desarrollo o Producción), se utilizarán diferentes comandos para actualizar los datos:
 
@@ -27,6 +28,8 @@ Si el colegio ya está usando la app y solo has añadido un Criterio nuevo al ar
 php artisan db:seed --class=RubricasSeeder
 ```
 *(Nota técnica: Para que la Opción B no duplique áreas existentes, en el futuro el código del Seeder utilizará el método `updateOrCreate()` de Laravel en lugar de `create()`)*.
+
+## Resolución de Problemas Frecuentes
 
 ### 4. Error 500: Session store not set on request
 * **El Problema:** Al intentar enviar las credenciales al endpoint `/api/login`, Laravel arrojaba un error interno (500). Esto se debe a que las rutas bajo el grupo `api` están diseñadas para ser *stateless* (sin estado/sin memoria) y no procesan sesiones.

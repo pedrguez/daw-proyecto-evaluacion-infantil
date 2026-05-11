@@ -19,3 +19,15 @@ Durante la fase final de desarrollo, se ha llevado a cabo una refactorización i
 ## 4. Optimización y Despliegue
 * **Limpieza de Código Boilerplate:** Eliminación de archivos y componentes autogenerados por Vite (`HomeView.vue`, `AboutView.vue`, iconos base) que no aportan valor a la lógica de negocio.
 * **Desactivación de Herramientas de Desarrollo:** Extracción del plugin `vite-plugin-vue-devtools` del archivo de configuración `vite.config.ts` y del panel inferior del navegador, preparando el entorno para su compilación final a producción.
+
+## 5. Diseño Responsive, Accesibilidad y Usabilidad
+El frontend se ha desarrollado con Bootstrap 5 y una estructura responsive adaptada a móvil, tablet y escritorio. Se han aplicado criterios de legibilidad, navegación clara, jerarquía visual y consistencia entre pantallas para facilitar el uso del sistema en el entorno educativo.
+
+Como comprobación automática, se ha realizado una auditoría con Lighthouse sobre una de las vistas principales de la aplicación, obteniendo una puntuación de `91` en accesibilidad y `100` en buenas prácticas. Estos valores sirven como evidencia de calidad técnica, aunque no sustituyen una auditoría formal completa de conformidad WCAG.
+
+## 6. Sostenibilidad y Relación con ODS
+El proyecto se ha planteado como una aplicación web ligera, modular y optimizada, evitando complejidad innecesaria y favoreciendo un consumo razonable de recursos tanto en cliente como en servidor.
+
+Desde el punto de vista educativo y social, la digitalización del proceso de evaluación mejora la organización del trabajo docente, reduce tareas manuales y disminuye la dependencia de documentación en papel.
+
+Por ello, el proyecto se relaciona principalmente con el **ODS 4: Educación de calidad**, al apoyar el seguimiento y la evaluación del alumnado mediante una herramienta digital, y de forma complementaria con el **ODS 12: Producción y consumo responsables**, al favorecer procesos de gestión más eficientes.

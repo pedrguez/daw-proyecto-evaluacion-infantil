@@ -27,6 +27,7 @@ Las versiones recientes de Laravel (v11+) instalan el sistema con las rutas API 
 ### Código del Controlador (`app/Http/Controllers/ControladorPrueba.php`):
 En lugar de retornar una vista tradicional, el controlador devuelve una respuesta JSON estandarizada:
 
+```php
 <?php
 namespace App\Http\Controllers;
 use Illuminate\Http\Request;
@@ -40,14 +41,17 @@ class ControladorPrueba extends Controller
     }
 }
 ?>
+```
 
 ### Definición de la Ruta (`routes/api.php`):
 Se expuso el controlador a través de una URL pública bajo el prefijo `/api`:
 
+```php
 <?php
 use App\Http\Controllers\ControladorPrueba;
 Route::get('/prueba', [ControladorPrueba::class, 'Saludar']);
 ?>
+```
 
 ---
 
@@ -55,6 +59,7 @@ Route::get('/prueba', [ControladorPrueba::class, 'Saludar']);
 
 En la interfaz gráfica, se configuró la vista del *Dashboard* (`DashboardView.vue`) para que, en el momento de montarse en pantalla (`onMounted`), realizara una petición GET a la nueva API de Laravel y enlazara la respuesta a una variable reactiva.
 
+```ts
 import { ref, onMounted } from 'vue'
 
 const mensajeBackend = ref<string>('Esperando respuesta de Laravel...')
@@ -68,5 +73,6 @@ onMounted(async () => {
     mensajeBackend.value = 'Error de conexión.'
   }
 })
+```
 
 **Resultado:** Comunicación bidireccional exitosa en tiempo real entre servidores locales independientes.

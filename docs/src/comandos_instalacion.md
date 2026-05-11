@@ -7,7 +7,7 @@ Comandos utilizados para instalar la herramienta de apuntes de forma manual y li
 
 ```bash
 # 1. Descargar la versión precompilada oficial
-wget [https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz](https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz)
+wget https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz
 
 # 2. Descomprimir el archivo descargado
 tar -xzf mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz
@@ -96,7 +96,7 @@ Comandos para descargar e instalar el cliente visual de bases de datos.
 
 ```bash
 # 1. Descargar el instalador oficial más reciente
-wget [https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb](https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb)
+wget https://dbeaver.io/files/dbeaver-ce_latest_amd64.deb
 
 # 2. Ejecutar la instalación del paquete
 sudo dpkg -i dbeaver-ce_latest_amd64.deb

@@ -3,7 +3,7 @@
 Para dar cumplimiento a los requisitos del módulo de **Sistemas de Gestión Empresarial**, se ha implementado un panel de gestión (Backoffice) que simula la arquitectura de un ERP, permitiendo la futura gestión de clientes (profesores/centros) y roles.
 
 
-# Gestión de Usuarios y Autenticación (Sanctum)
+## Gestión de Usuarios y Autenticación (Sanctum)
 
 El sistema utiliza Laravel Sanctum para la autenticación SPA (Single Page Application) basada en cookies.
 
@@ -20,6 +20,9 @@ Existen dos perfiles definidos:
 La creación de la cuenta de dirección se realiza exclusivamente por consola de servidor para evitar brechas de seguridad públicas:
 
 ```bash
+# Acceder a la consola interactiva dentro del contenedor Docker
+sudo docker exec -it laravel_api php artisan tinker
+
 # Creación del Superadministrador (Director)
 App\Models\User::create([
     'name' => 'Director', 
@@ -53,8 +56,10 @@ Dado que el proyecto utiliza una arquitectura desacoplada (Frontend en Vue 3 y B
 ## Configuración del Modelo de Usuario
 Se ha modificado el modelo principal de la base de datos (`User.php`) añadiendo el trait `HasApiTokens` para permitir la emisión y validación de credenciales en la API.
 
-`composer require laravel/breeze --dev`
-`php artisan breeze:install api`
+```bash
+composer require laravel/breeze --dev
+php artisan breeze:install api
+```
 
 ## Protección de Rutas en el Frontend (Navigation Guards)
 
@@ -77,14 +82,16 @@ Durante el despliegue con Docker, si el frontend (Vue) y el backend (Laravel) op
 Solución aplicada:
 Se deben configurar estrictamente las variables de entorno en el archivo `.env` del backend para declarar al frontend como una aplicación de confianza:
 
-`SESSION_DOMAIN=` (Dejar vacío para evitar conflictos de resolución en localhost).
+```env
+SESSION_DOMAIN=
+SANCTUM_STATEFUL_DOMAINS=localhost:5173,127.0.0.1:5173
+FRONTEND_URL=http://localhost:5173
+```
 
-`SANCTUM_STATEFUL_DOMAINS=localhost:5173,127.0.0.1:5173`
-
-`FRONTEND_URL=http://localhost:5173`
+`SESSION_DOMAIN` debe dejarse vacío para evitar conflictos de resolución en localhost.
 
 Tras cualquier cambio en estas variables, es obligatorio purgar la caché de configuración:
 
-```Bash
+```bash
 sudo docker exec -it laravel_api php artisan optimize:clear
 ```
