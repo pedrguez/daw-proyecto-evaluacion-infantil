@@ -192,14 +192,14 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="container mt-4 mb-5"> // Encabezado con título, media del área activa y selector de trimestre
+  <div class="container mt-4 mb-5">
 
-    <div class="mb-4">// Botón para volver al perfil del alumno
+    <div class="mb-4">
       <button @click="router.push(`/alumno/${alumnoId}`)" class="btn btn-outline-secondary btn-sm mb-3 fw-bold">
         &larr; Volver al Perfil del Alumno
       </button>
 
-      <div class="d-flex flex-wrap justify-content-between align-items-end border-bottom pb-3 mb-4 gap-3"> // Título y media del área activa
+      <div class="d-flex flex-wrap justify-content-between align-items-end border-bottom pb-3 mb-4 gap-3">
         <div>
           <h2 class="fw-bolder mb-2 display-6 text-dark">Evaluación Trimestral</h2>
           <span class="badge bg-primary bg-opacity-10 text-primary border border-primary rounded-pill px-3 py-2 fs-6">
@@ -207,7 +207,7 @@ onMounted(async () => {
           </span>
         </div>
 
-        <div class="d-flex align-items-center gap-3 bg-light p-3 border rounded-3 shadow-sm"> // Media del área activa
+        <div class="d-flex align-items-center gap-3 bg-light p-3 border rounded-3 shadow-sm">
           <div class="fs-5 text-secondary">
             Media del Área: <strong class="text-primary fs-4">{{ mediaAreaActiva > 0 ? mediaAreaActiva.toFixed(2) : '0.00' }}</strong> / 4.00
           </div>
@@ -219,12 +219,12 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div v-if="areas.length === 0" class="alert alert-info text-center py-5 shadow-sm fw-bold"> // Cargando rúbrica oficial...
+    <div v-if="areas.length === 0" class="alert alert-info text-center py-5 shadow-sm fw-bold">
       ⏳ Descargando rúbrica oficial desde la base de datos...
     </div>
 
     <div v-else>
-      <ul class="nav nav-tabs mb-4"> // Pestañas para cada área
+      <ul class="nav nav-tabs mb-4">
         <li class="nav-item" v-for="area in areas" :key="area.id">
           <button class="nav-link fw-bold text-secondary"
                   :class="{ 'active text-primary bg-light border-bottom-0': tabActiva === area.id }"
@@ -234,7 +234,7 @@ onMounted(async () => {
         </li>
       </ul>
 
-      <div v-if="areaActual" class="mb-5 bg-white p-4 rounded-3 border shadow-sm"> // Contenido del área activa
+      <div v-if="areaActual" class="mb-5 bg-white p-4 rounded-3 border shadow-sm">
         <h3 class="fw-bold text-dark border-bottom border-primary pb-2 mb-4 d-inline-block">
           {{ areaActual.nombre }}
         </h3>
@@ -248,7 +248,7 @@ onMounted(async () => {
             <p class="text-secondary fs-6 ms-4 mb-0">{{ competencia.texto }}</p>
           </div>
 
-          <div class="ps-0 ps-md-4"> // Criterios de evaluación de la competencia
+          <div class="ps-0 ps-md-4">
             <div v-for="criterio in competencia.criterios" :key="criterio.id" class="border pt-4 pb-4 px-4 mt-4 rounded-3 bg-light">
               <p class="mb-3 text-secondary fs-6">
                 <strong class="text-dark">Criterio {{ criterio.identificador }}:</strong> {{ criterio.texto.replace(/^[0-9.]+\s*/, '') }}
@@ -279,12 +279,12 @@ onMounted(async () => {
       </div>
     </div>
 
-    <div class="mt-5 pt-4 border-top d-flex flex-column align-items-end gap-3"> // Sección de nota global y selector de trimestre
+    <div class="mt-5 pt-4 border-top d-flex flex-column align-items-end gap-3">
       <div v-if="mediaGlobal !== '0.00'" class="bg-dark text-white px-4 py-2 rounded-3 fs-5 shadow-sm">
         Nota Trimestral Global: <strong class="text-success fs-4">{{ mediaGlobal }}</strong> / 4.00
       </div>
 
-      <div class="d-flex flex-wrap gap-3 align-items-center"> // Selector de trimestre y botón para guardar evaluación
+      <div class="d-flex flex-wrap gap-3 align-items-center">
         <div class="d-flex align-items-center gap-2 bg-light p-2 px-3 rounded border shadow-sm">
           <label class="fw-bold text-secondary mb-0">Evaluando:</label>
           <select v-model="trimestreActivo" class="form-select form-select-sm w-auto fw-bold cursor-pointer">

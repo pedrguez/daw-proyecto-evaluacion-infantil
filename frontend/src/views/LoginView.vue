@@ -42,7 +42,7 @@ const iniciarSesion = async () => {
 </script>
 
 <template>
-  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh; background-color: #f3f4f6;"> // Fondo gris claro y centrado verticalmente
+  <div class="d-flex justify-content-center align-items-center" style="min-height: 80vh; background-color: #f3f4f6;">
 
     <div class="card shadow border-0 p-4 w-100" style="max-width: 400px; border-radius: 8px;">
 
@@ -53,12 +53,12 @@ const iniciarSesion = async () => {
 
       <form @submit.prevent="iniciarSesion">
 
-        <div class="mb-3 text-start"> // Campo de correo electrónico
+        <div class="mb-3 text-start">
           <label for="email" class="form-label fw-bold text-secondary mb-1" style="font-size: 0.9em;">Correo Electrónico</label>
           <input type="email" id="email" v-model="email" class="form-control" required placeholder="profesor@colegio.com" />
         </div>
 
-        <div class="mb-4 text-start"> // Campo de contraseña
+        <div class="mb-4 text-start"> 
           <label for="password" class="form-label fw-bold text-secondary mb-1" style="font-size: 0.9em;">Contraseña</label>
           <input type="password" id="password" v-model="password" class="form-control" required placeholder="********" />
         </div>

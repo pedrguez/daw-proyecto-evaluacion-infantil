@@ -1,14 +1,14 @@
 <template>
   <div class="container mt-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4"> // Encabezado y botón para añadir nuevo profesor
+    <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>Gestión de Personal</h2>
       <button v-if="!mostrarFormulario" @click="mostrarFormulario = true" class="btn btn-success">
         + Añadir Nuevo Profesor
       </button>
     </div>
 
-    <div v-if="mostrarFormulario" class="card shadow-sm mb-4"> // Formulario para añadir nuevo profesor
+    <div v-if="mostrarFormulario" class="card shadow-sm mb-4">
       <div class="card-body">
         <h5 class="card-title mb-3">Registro de Nuevo Profesor</h5>
         <form @submit.prevent="agregarProfesor">
@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <div class="card shadow-sm border-0"> // Tabla de profesores
+    <div class="card shadow-sm border-0">
       <div class="card-body p-0">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
@@ -74,7 +74,7 @@
       </div>
     </div>
 
-    <div v-if="mostrarModal" class="modal d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);"> // Modal para editar profesor
+    <div v-if="mostrarModal" class="modal d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header bg-light">

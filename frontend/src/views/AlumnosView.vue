@@ -64,7 +64,7 @@ onMounted(obtenerAlumnos) // Cargamos los alumnos al montar el componente para m
 <template>
   <div class="container mt-4">
 
-    <div class="d-flex justify-content-between align-items-center mb-4"> // Encabezado con título y botón para mostrar el formulario
+    <div class="d-flex justify-content-between align-items-center mb-4">
       <h2>Lista de Alumnos</h2>
       <button v-if="!mostrarFormulario" @click="mostrarFormulario = true" class="btn btn-success">
         + Añadir Nuevo Alumno
@@ -104,7 +104,7 @@ onMounted(obtenerAlumnos) // Cargamos los alumnos al montar el componente para m
         </form>
       </div>
     </div>
-          // Tabla para mostrar la lista de alumnos con acciones para ver ficha y eliminar
+
     <div class="card shadow-sm">
       <div class="card-body p-0">
         <div class="table-responsive">
@@ -127,12 +127,11 @@ onMounted(obtenerAlumnos) // Cargamos los alumnos al montar el componente para m
                   <span class="text-muted fst-italic">{{ alumno.observaciones || '---' }}</span>
                 </td>
                 <td>
-                      <div class="d-flex gap-2">
-                        <button @click="$router.push(`/alumno/${alumno.id}`)" class="btn btn-primary btn-sm">Ver Ficha</button> // Redirige a la vista de ficha del alumno
-
-                        <button @click="eliminarAlumno(alumno)" class="btn btn-outline-danger btn-sm">Eliminar</button> // Llama a la función para eliminar el alumno con confirmación previa
-                      </div>
-                    </td>
+                  <div class="d-flex gap-2">
+                    <button @click="$router.push(`/alumno/${alumno.id}`)" class="btn btn-primary btn-sm">Ver Ficha</button>
+                    <button @click="eliminarAlumno(alumno)" class="btn btn-outline-danger btn-sm">Eliminar</button>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>

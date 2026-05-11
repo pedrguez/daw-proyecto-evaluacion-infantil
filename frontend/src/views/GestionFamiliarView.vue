@@ -4,7 +4,7 @@
       <h2>Gestión Familiar</h2>
     </div>
 
-    <div class="card shadow-sm border-0"> // Tabla de alumnos y datos familiares
+    <div class="card shadow-sm border-0">
       <div class="card-body p-0">
         <div class="table-responsive">
           <table class="table table-hover align-middle mb-0">
@@ -40,7 +40,7 @@
       </div>
     </div>
 
-    <div v-if="mostrarModal" class="modal d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);"> // Modal para editar datos familiares
+    <div v-if="mostrarModal" class="modal d-block" style="background: rgba(0,0,0,0.6); backdrop-filter: blur(2px);">
       <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg">
           <div class="modal-header bg-light">

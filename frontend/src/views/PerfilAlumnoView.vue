@@ -103,7 +103,7 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="alumno" class="container mt-4 mb-5"> // Contenedor principal con márgenes verticales
+  <div v-if="alumno" class="container mt-4 mb-5">
 
     <header class="mb-4">
       <button @click="$router.push('/alumnos')" class="btn btn-outline-secondary btn-sm mb-3 fw-bold">
