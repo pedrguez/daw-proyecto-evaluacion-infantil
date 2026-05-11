@@ -1,0 +1,44 @@
+name: Despliegue de Documentacion (CI/CD)
+
+# Esto le dice a GitHub que ejecute el script cuando subas código a la rama principal
+on:
+  push:
+    branches:
+      - main
+      - master
+
+# Permisos estrictos de seguridad necesarios para publicar en GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 1. Descargar el código del repositorio
+        uses: actions/checkout@v4
+
+      - name: 2. Instalar herramienta mdBook
+        run: |
+          curl -sL https://github.com/rust-lang/mdBook/releases/download/v0.4.37/mdbook-v0.4.37-x86_64-unknown-linux-gnu.tar.gz | tar -xz
+          sudo mv mdbook /usr/local/bin/
+
+      - name: 3. Compilar los apuntes a HTML
+        run: |
+          cd docs
+          mdbook build
+
+      - name: 4. Empaquetar la web estática
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./docs/book
+
+      - name: 5. Desplegar online en GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
