@@ -57,6 +57,10 @@ sudo chown -R $USER:$USER .
 
 Además del despliegue local del proyecto con Docker, la documentación técnica del proyecto se publica automáticamente mediante **GitHub Pages** y **GitHub Actions**. Esto permite que el libro generado con mdBook esté accesible en la web sin necesidad de compilarlo manualmente tras cada cambio.
 
+La URL pública de la documentación es:
+
+- <https://pedrguez.github.io/daw-proyecto-evaluacion-infantil/>
+
 ### 1. Activación de GitHub Pages
 
 En la configuración del repositorio, dentro de **Settings > Pages**, se ha establecido el apartado **Build and deployment** con la opción **Source = GitHub Actions**. Esta configuración indica a GitHub que la publicación de la documentación no depende de una rama estática, sino de un flujo de automatización controlado por un workflow.

@@ -11,7 +11,7 @@ El sistema utiliza Laravel Sanctum para la autenticación SPA (Single Page Appli
 
 Para cumplir con los requisitos de seguridad y acceso a datos del centro educativo, se ha implementado un sistema de control de acceso basado en roles (Role-Based Access Control). 
 
-Se ha modificado el modelo `User` de Laravel (versión 11, mediante atributos PHP 8) y su correspondiente migración para incluir la columna `rol`.
+Se ha modificado el modelo `User` de Laravel (versión 13, mediante atributos PHP 8) y su correspondiente migración para incluir la columna `rol`.
 
 Existen dos perfiles definidos:
 1. **Profesor (rol por defecto):** Acceso restringido a sus tutorías y diarios de aula.

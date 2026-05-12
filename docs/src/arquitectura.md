@@ -36,7 +36,7 @@ class ControladorPrueba extends Controller
 {
     public function Saludar() {
         return response()->json([
-            'mensaje' => '¡Hola! Soy tu ControladorPrueba de Laravel. Nuestra API funciona perfecto.'
+            'mensaje' => '¡Hola! Nuestra API funciona perfecto.'
         ]);
     }
 }

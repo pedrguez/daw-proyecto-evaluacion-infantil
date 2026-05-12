@@ -33,7 +33,7 @@ Si todo ha arrancado correctamente, deberían aparecer estos servicios:
 
 ## Inicialización de datos
 
-Si necesitas cargar la estructura oficial de rúbricas y criterios en una base de datos vacía, ejecuta el seeder desde el contenedor del backend una vez que el sistema ya esté levantado:
+Si se necesita cargar la estructura oficial de rúbricas y criterios en una base de datos vacía, ejecuta el seeder desde el contenedor del backend una vez que el sistema ya esté levantado:
 
 ```bash
 sudo docker exec -it laravel_api php artisan db:seed --class=RubricasSeeder

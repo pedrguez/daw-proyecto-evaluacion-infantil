@@ -8,9 +8,9 @@ Para realizar cambios en la normativa o añadir nuevas áreas, el flujo de traba
 
 1.  **Edición del Seeder**: Localizar el archivo `backend/database/seeders/RubricasSeeder.php`.
 2.  **Identificación del Bloque**: 
-    * Para una nueva **Área**: Usar `Area::create(['nombre' => '...'])`.
-    * Para una **Competencia**: Usar `Competencia::create(['area_id' => $area->id, 'texto' => '...'])`.
-    * Para un **Criterio**: Usar el bloque `Criterio::create([...])` asegurando que el `competencia_id` apunte a la competencia correcta.
+  * Para una nueva **Área**: Usar `Area::updateOrCreate(['nombre' => '...'])`.
+  * Para una **Competencia**: Usar `Competencia::updateOrCreate(['area_id' => $area->id, 'texto' => '...'])`.
+  * Para un **Criterio**: Usar `Criterio::updateOrCreate(['competencia_id' => $competencia->id, 'identificador' => '...'], [...])`, asegurando que `competencia_id` e `identificador` correspondan al criterio correcto.
 
 ## Comandos de Actualización en Base de Datos
 
@@ -27,7 +27,7 @@ Si el colegio ya está usando la app y solo has añadido un Criterio nuevo al ar
 ```bash
 php artisan db:seed --class=RubricasSeeder
 ```
-*(Nota técnica: Para que la Opción B no duplique áreas existentes, en el futuro el código del Seeder utilizará el método `updateOrCreate()` de Laravel en lugar de `create()`)*.
+*(Nota técnica: El seeder ya utiliza el método `updateOrCreate()` de Laravel para evitar duplicados y permitir la actualización de registros existentes.)*.
 
 ## Resolución de Problemas Frecuentes
 
